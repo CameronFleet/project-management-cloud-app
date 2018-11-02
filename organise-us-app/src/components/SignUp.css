@@ -1,7 +1,8 @@
-.Login {
+.Signup {
     padding: 70px 0;
 }
-.Login form {
+
+.Signup .Register form {
     margin: 0 auto;
     max-width: 350px;
 }

@@ -2,13 +2,7 @@ import "./Login.css";
 import React from 'react';
 import {FormControl, ControlLabel, FormGroup, Button} from 'react-bootstrap';
 import { Auth } from 'aws-amplify';
-
-function FormField({label, id, ...props}) {
-    return (<FormGroup controlId={id} bsSize="large">
-                <ControlLabel>{label}</ControlLabel>
-                <FormControl {...props} />
-            </FormGroup>);
-}
+import FormField from "../containers/FormField";
 
 export default class Login extends React.Component {
 
@@ -28,11 +22,11 @@ export default class Login extends React.Component {
         try {
             await Auth.signIn(this.state.email, this.state.password);
             alert("Signed in!");
+            this.props.setAuthenticated(true);
+            this.props.history.push("/");
         } catch(e) {
             alert(e.message);
         }
-
-        this.props.history.push("/");
     }
 
     validateForm() {

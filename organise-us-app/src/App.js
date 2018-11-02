@@ -4,6 +4,7 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import Routes from "./Routes";
+import { Auth } from 'aws-amplify';
 
 
 function LinkItem ({to, text, ...props}) {
@@ -15,7 +16,47 @@ function LinkItem ({to, text, ...props}) {
 }
 
 class App extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {isAuthenticated: false}
+    }
+
+    async componentDidMount() {
+        try {
+            await Auth.currentSession();
+            this.setAuthenticated(true);
+        }
+        catch(e) {
+            if(e !== 'No current user') {
+                alert(e);
+            }
+        }
+
+        this.setState({ isAuthenticating: false} )
+    }
+
+    setAuthenticated = (authenticated) => {
+        this.setState({isAuthenticated: authenticated});
+    }
+
+
+    handleLogout = async event => {
+        try {
+            await Auth.signOut();
+            alert("Logged out!");
+            this.setAuthenticated(false);
+        } catch (e) {
+            alert(e.message)
+        }
+
+    }
+
     render() {
+
+        const cProps = {isAuthenticated: false,
+                        setAuthenticated: this.setAuthenticated};
+
         return (
             <div className="App">
                 <Navbar fluid collapseOnSelect>
@@ -27,16 +68,27 @@ class App extends Component {
                     </Navbar.Header>
 
                     <Navbar.Collapse>
+
                         <Nav pullRight>
-                            <LinkItem to="/signup" text="Signup" />
-                            <LinkItem to="/login" text="Login" />
+                            {!this.state.isAuthenticated ?
+                                <>
+                                    <LinkItem to="/signup" text="Signup" />
+                                    <LinkItem to="/login" text="Login" />
+                                </>
+                                :
+                                <>
+                                    <NavItem onClick={this.handleLogout}>Logout </NavItem>
+                                </>
+                            }
+
                         </Nav>
+
                         <Nav pullLeft>
                             <LinkItem to="/projects" text="Projects" />
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-                <Routes/>
+                <Routes childProps={cProps} />
             </div>
         );
     }
