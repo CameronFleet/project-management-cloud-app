@@ -1,8 +1,9 @@
 import React from 'react';
+import { Auth } from 'aws-amplify';
 import FormField from "../containers/FormField";
 
 import "./SignUp.css";
-import {Button} from "react-bootstrap";
+import {Button, Checkbox} from "react-bootstrap";
 
 export default class SignUp extends React.Component {
 
@@ -13,19 +14,55 @@ export default class SignUp extends React.Component {
             email: "",
             password: "",
             repeatPassword: "",
-            isSignedUp: false
+            isSignedUp: false,
+            acceptedTerms: false,
+            confirmation: ""
         }
     }
 
     validateForm() {
         return (this.state.email.length > 0 &&
-               this.state.password.length > 0 &&
-               this.state.password === this.state.repeatPassword);
+            this.state.password.length > 0 &&
+            this.state.password === this.state.repeatPassword) &&
+            this.state.acceptedTerms;
     }
 
-    handleSubmit = event => {
+    handleSubmit = async event => {
         event.preventDefault();
-        this.setState({isSignedUp: true});
+
+        try {
+            await Auth.signUp({
+                username: this.state.email,
+                password: this.state.password
+            });
+
+            this.setState({isSignedUp: true});
+            alert("Signed Up!");
+
+        } catch(e) {
+            if(e.code == "UsernameExistsException") {
+                this.setState({isSignedUp: true});
+            } else {
+                alert(e.message);
+            }
+        }
+
+    }
+
+    handleConfirmation = async event => {
+        event.preventDefault();
+
+        try {
+            await Auth.confirmSignUp(this.state.email, this.state.confirmation);
+
+            alert("Account Confirmed");
+
+            await Auth.signIn(this.state.email, this.state.password);
+
+            this.props.history.push("/");
+        } catch (e) {
+            alert(e.message);
+        }
     }
 
     handleChange = event => {
@@ -33,20 +70,40 @@ export default class SignUp extends React.Component {
     }
 
     renderConfirmation() {
+        return (
+            <div className="Confirmation">
+                <form onSubmit={this.handleConfirmation}>
+                    <FormField label="Confirmation Code" type="text" id="confirmation" placeholder="Enter Code"
+                               value={this.state.confirmation} onChange={this.handleChange}/>
 
+                    <Button block
+                            bsStyle="primary"
+                            bsSize="large"
+                            disabled={!(this.state.confirmation > 0)}
+                            type="submit"
+                    >
+                        Confirm
+                    </Button>
+                </form>
+            </div>
+        );
     }
 
     renderSignUp() {
         return (
-            <div className="Register" >
+            <div className="Register">
                 <form onSubmit={this.handleSubmit}>
                     <FormField label="Email" type="email" id="email" placeholder="Enter email" value={this.state.email}
                                onChange={this.handleChange}/>
-                    <FormField label="Password" type="password" id="password" placeholder="Enter password"
+                    <FormField label="Choose Password" type="password" id="password" placeholder="Enter password"
                                value={this.state.password} onChange={this.handleChange}/>
 
-                    <FormField label="Repeat Password" type="password" id="repeatPassword" placeholder="Repeat password"
+                    <FormField label="Confirm Password" type="password" id="repeatPassword" placeholder="Enter password"
                                value={this.state.repeatPassword} onChange={this.handleChange}/>
+
+                    <Checkbox onChange={() => this.setState({acceptedTerms: !this.state.acceptedTerms})}>
+                        Do you accept the <a href="https://www.google.com">T&C?</a>
+                    </Checkbox>
 
                     <Button
                         block

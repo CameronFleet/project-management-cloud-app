@@ -54,7 +54,7 @@ class App extends Component {
 
     render() {
 
-        const cProps = {isAuthenticated: false,
+        const cProps = {isAuthenticated: this.state.isAuthenticated,
                         setAuthenticated: this.setAuthenticated};
 
         return (
@@ -84,7 +84,14 @@ class App extends Component {
                         </Nav>
 
                         <Nav pullLeft>
-                            <LinkItem to="/projects" text="Projects" />
+                            {this.state.isAuthenticated ?
+                                <>
+                                    <LinkItem to="/projects" text="Projects" />
+                                </>
+                                :
+                                <>
+                                </>
+                            }
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
