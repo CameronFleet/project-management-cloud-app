@@ -5,6 +5,15 @@ import { Link, withRouter } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import Routes from "./Routes";
 
+
+function LinkItem ({to, text, ...props}) {
+    return(
+    <LinkContainer to={to} {...props}>
+        <NavItem>{text}</NavItem>
+    </LinkContainer>
+    );
+}
+
 class App extends Component {
     render() {
         return (
@@ -19,9 +28,11 @@ class App extends Component {
 
                     <Navbar.Collapse>
                         <Nav pullRight>
-                            <LinkContainer to="/login">
-                                <NavItem>Login</NavItem>
-                            </LinkContainer>
+                            <LinkItem to="/signup" text="Signup" />
+                            <LinkItem to="/login" text="Login" />
+                        </Nav>
+                        <Nav pullLeft>
+                            <LinkItem to="/projects" text="Projects" />
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
