@@ -1,14 +1,12 @@
-import React from 'react';
-import { Route, Redirect} from 'react-router-dom';
-import { API } from 'aws-amplify';
-
+import {Redirect, Route} from "react-router-dom";
+import React from "react";
 
 export default ({props: cProps, component: C, ...rest}) =>
+
     <Route {...rest} render={
         props =>
-            cProps.isAuthenticated
+            cProps.isAdmin
                 ? <C {...props} {...cProps} />
                 : <Redirect
                     to={"/"}
                 />}/>;
-

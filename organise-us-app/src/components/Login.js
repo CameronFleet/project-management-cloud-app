@@ -21,9 +21,9 @@ export default class Login extends React.Component {
 
         try {
             await Auth.signIn(this.state.email, this.state.password);
-            alert("Signed in!");
-            this.props.history.push("/");
             this.props.setAuthenticated(true);
+            this.props.authorize();
+            this.props.history.push("/");
         } catch(e) {
             alert(e.message);
         }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Auth } from 'aws-amplify';
+import { Auth, API } from 'aws-amplify';
 import FormField from "../containers/FormField";
 
 import "./SignUp.css";
@@ -36,11 +36,12 @@ export default class SignUp extends React.Component {
                 password: this.state.password
             });
 
+
             this.setState({isSignedUp: true});
             alert("Signed Up!");
 
         } catch(e) {
-            if(e.code == "UsernameExistsException") {
+            if(e.code === "UsernameExistsException") {
                 this.setState({isSignedUp: true});
             } else {
                 alert(e.message);
@@ -58,6 +59,13 @@ export default class SignUp extends React.Component {
             alert("Account Confirmed");
 
             await Auth.signIn(this.state.email, this.state.password);
+
+            alert("Signed in");
+
+            const currentUser = await Auth.currentUserInfo();
+
+            //Probably a massive security flaw
+            await API.post("users","/create/dev", { body: {id: currentUser.id} });
 
             this.props.history.push("/");
         } catch (e) {
