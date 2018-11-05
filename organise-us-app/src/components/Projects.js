@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, FormControl, Glyphicon, DropdownButton, MenuItem, Badge} from 'react-bootstrap'
+import {Button, FormControl, Glyphicon, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
 import "./Projects.css"
 import ProjectPanel from "../containers/ProjectPanel";
 
@@ -9,7 +9,17 @@ export default class Projects extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {filter: 'NONE', searchedTitle: "", projectSelectedCount: 0};
+        this.state = {show: false, editing: false, filter: 'NONE', searchedTitle: "", selectedProjects: new Array()};
+    }
+
+    selectProject = (project) => {
+        this.setState({selectedProjects: this.state.selectedProjects.concat([project])});
+    }
+
+    unselectProject = (project) => {
+        var array = this.state.selectedProjects;
+        array.splice(array.indexOf(project), 1);
+        this.setState({selectedProjects: array});
     }
 
     generateProjects = () => {
@@ -33,7 +43,8 @@ export default class Projects extends React.Component {
                 }
             };
 
-            projects.push(<ProjectPanel {...projectProps}/>);
+            projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
+                                        unselectProject={this.unselectProject}/>);
         }
 
         for (; i < 20; i++) {
@@ -47,7 +58,8 @@ export default class Projects extends React.Component {
                 status: "inProgress"
             };
 
-            projects.push(<ProjectPanel {...projectProps}/>);
+            projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
+                                        unselectProject={this.unselectProject}/>);
 
         }
 
@@ -65,7 +77,8 @@ export default class Projects extends React.Component {
                 }
             };
 
-            projects.push(<ProjectPanel {...projectProps}/>);
+            projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
+                                        unselectProject={this.unselectProject}/>);
 
         }
 
@@ -126,6 +139,27 @@ export default class Projects extends React.Component {
         this.setState({[event.target.id]: event.target.value});
     }
 
+    handleAdd = () => {
+        this.showModal(false);
+    }
+
+    handleRemove = () => {
+        if (this.state.selectedProjects.length == 0) {
+            alert("Please select project(s) to delete.");
+        }
+    }
+
+    handleEdit = () => {
+        if (this.state.selectedProjects.length > 1) {
+            alert("Please select just one project to edit.");
+        }
+        else if (this.state.selectedProjects.length == 0) {
+            alert("Please select project(s) to edit.")
+        } else {
+            this.showModal(true);
+        }
+    }
+
     renderControls() {
         return (
             <>
@@ -137,21 +171,21 @@ export default class Projects extends React.Component {
                 </Button>
 
                 <Button className="cloudButton">
-                    <Glyphicon glyph="cloud" />
+                    <Glyphicon glyph="cloud"/>
                 </Button>
 
                 {this.props.isProjectManager &&
                 <>
                     <Button className="addButton">
-                        <Glyphicon glyph="plus"/>
+                        <Glyphicon glyph="plus" onClick={this.handleAdd}/>
                     </Button>
 
-                    <Button className="removeButton">
+                    <Button className="removeButton" onClick={this.handleRemove}>
                         <Glyphicon glyph="minus"/>
                     </Button>
 
-                    <Button className="editButton">
-                        <Glyphicon glyph="pencil" />
+                    <Button className="editButton" onClick={this.handleEdit}>
+                        <Glyphicon glyph="pencil"/>
                     </Button>
                 </>}
 
@@ -163,6 +197,33 @@ export default class Projects extends React.Component {
             </>);
     }
 
+
+    showModal = editing => {
+        this.setState({show: true, editing: editing});
+    }
+
+    hideModal = () => {
+        this.setState({show: false});
+    }
+
+    renderModal() {
+        return (
+            <>
+                <Modal show={this.state.show} onHide={this.hideModal}>
+                    <Modal.Header>
+                        {this.state.editing
+                        ? <b>Editing project</b>
+                        : <b>Adding project</b>}
+                    </Modal.Header>
+                    <Modal.Body>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.hideModal}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
+        );
+    }
 
     render() {
 
@@ -176,6 +237,7 @@ export default class Projects extends React.Component {
                 <div className="Display">
                     {this.renderDisplay(projects)}
                 </div>
+                {this.renderModal()}
             </div>
         );
     }

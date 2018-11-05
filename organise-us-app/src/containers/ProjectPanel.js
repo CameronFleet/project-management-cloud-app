@@ -23,12 +23,14 @@ export default class ProjectPanel extends React.Component {
 
     handleClick = event => {
         this.setState({isClicked: !this.state.isClicked});
+
+        if(!this.state.isClicked) {
+            this.props.selectProject(this);
+        } else {
+            this.props.unselectProject(this);
+        }
     }
 
-
-    getIsClicked() {
-        return this.state.isClicked;
-    }
 
     renderAttributes() {
         var attributes = []
