@@ -59,7 +59,7 @@ class App extends Component {
         try {
             await Auth.currentSession();
             this.setAuthenticated(true);
-            this.authorize();
+            await this.authorize();
         }
         catch (e) {
             if (e !== 'No current user') {
@@ -92,7 +92,7 @@ class App extends Component {
             isAuthenticated: this.state.isAuthenticated,
             setAuthenticated: this.setAuthenticated,
             authorize: this.authorize,
-            isProjectManager: this.state.isProjectManager,
+            isProjectManager: this.state.isProjectManager || this.state.isAdmin,
             isAdmin: this.state.isAdmin
         };
 

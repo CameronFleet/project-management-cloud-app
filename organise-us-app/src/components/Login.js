@@ -22,7 +22,7 @@ export default class Login extends React.Component {
         try {
             await Auth.signIn(this.state.email, this.state.password);
             this.props.setAuthenticated(true);
-            this.props.authorize();
+            await this.props.authorize();
             this.props.history.push("/");
         } catch(e) {
             alert(e.message);

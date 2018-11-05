@@ -1,4 +1,75 @@
 .Projects {
-    margin-top: 300px;
+    margin-top: 20px;
     text-align: center;
+}
+
+.Projects .search {
+    margin-left: 20px;
+    min-width: 50px;
+    max-width: 250px;
+    float: left;
+}
+.Projects .Controls .searchButton {
+    margin-left: 10px;
+    float: left;
+}
+
+.Projects .Controls .cloudButton {
+    background-color: dodgerblue;
+    border: dodgerblue;
+    color: whitesmoke;
+    float: left;
+    margin-left: 10px;
+
+}
+
+.Projects .Controls .addButton {
+    background-color: darkgreen;
+    border: darkgreen;
+    color: whitesmoke;
+
+}
+
+.Projects .Controls .removeButton {
+    margin-left: 5px;
+
+    background-color: darkred;
+    border: darkred;
+    color: whitesmoke;
+}
+
+.Projects .Controls .editButton {
+    margin-left: 5px;
+
+    background-color: orange;
+    border: orange;
+    color: whitesmoke;
+}
+
+.Projects .Controls{
+    text-align: right;
+}
+
+.Projects .Controls .filterButton {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 100px;
+}
+
+.Projects .Controls .filterBadge {
+    margin-left: 10px;
+    margin-right: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.Projects .navbar {
+    margin-left: 200px;
+    margin-right: 200px;
+}
+
+.Projects .panel {
+    margin: 10px;
+    max-width: 330px;
+    float: left;
 }

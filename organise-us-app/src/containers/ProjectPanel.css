@@ -1,0 +1,44 @@
+
+.panel .project-manager {
+    color: black;
+    background-color: white;
+}
+
+
+.javaBadge {
+    margin-left: 3px;
+    margin-right: 3px;
+    background-color: orange;
+}
+
+.cssBadge {
+    margin-left: 3px;
+    margin-right: 3px;
+    background-color: hotpink;
+}
+
+.agileBadge {
+    margin-left: 3px;
+    margin-right: 3px;
+    background-color: aquamarine;
+}
+.panel .footer {
+    text-align: left;
+
+}
+
+.panel .footer .startDateLabel {
+     margin-right: 100px;
+     margin-bottom: 5px;
+     background-color: darkgreen;
+     float: left;
+ }
+
+.panel .footer .endDateLabel {
+    margin-right: 100px;
+    background-color: darkred;
+    float: left;
+}
+.panel .footer .members {
+    text-align: right;
+}
