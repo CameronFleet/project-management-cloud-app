@@ -216,6 +216,7 @@ export default class Projects extends React.Component {
                         : <b>Adding project</b>}
                     </Modal.Header>
                     <Modal.Body>
+
                     </Modal.Body>
                     <Modal.Footer>
                         <Button onClick={this.hideModal}>Close</Button>
