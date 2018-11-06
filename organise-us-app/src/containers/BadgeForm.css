@@ -11,6 +11,9 @@
     color: lightgrey;
 }
 
+.tinyRemove:hover {
+    color: darkgrey;
+}
 
 .remove {
     background-color: darkred;

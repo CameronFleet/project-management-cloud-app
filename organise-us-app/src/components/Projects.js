@@ -208,8 +208,8 @@ export default class Projects extends React.Component {
 
                 {this.props.isProjectManager &&
                 <>
-                    <Button className="addButton">
-                        <Glyphicon glyph="plus" onClick={this.handleAdd}/>
+                    <Button className="addButton" onClick={this.handleAdd}>
+                        <Glyphicon glyph="plus" />
                     </Button>
 
                     <Button className="removeButton" onClick={this.handleRemove}>
