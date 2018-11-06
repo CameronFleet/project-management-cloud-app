@@ -1,30 +1,49 @@
 import React from "react";
-import {Panel, Label, Badge} from "react-bootstrap";
+import {
+    Panel,
+    Label,
+    Modal,
+
+} from "react-bootstrap";
+import AttributeBadges from "./AttributeBadges";
 
 import "./ProjectPanel.css";
+
 
 const statusMapping = new Map();
 statusMapping.set("notStarted", "danger");
 statusMapping.set("inProgress", "warning");
 statusMapping.set("finished", "success");
 
-const java = <Badge className={"javaBadge"}>java</Badge>;
-const css = <Badge className={"cssBadge"}>css</Badge>;
-const agile = <Badge className={"agileBadge"}>agile</Badge>;
-
 export default class ProjectPanel extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {isClicked: false}
+        this.state = {
+            isClicked: false
+        }
+    }
+
+    formatMemebers(members) {
+        var formattedOutput = "";
+
+        for (var i = 0; i < members.length; i++) {
+            if (i === members.length - 1) {
+                formattedOutput += members[i];
+            } else {
+                formattedOutput += members[i] + "+"
+            }
+        }
+
+        return formattedOutput;
     }
 
 
     handleClick = event => {
         this.setState({isClicked: !this.state.isClicked});
 
-        if(!this.state.isClicked) {
+        if (!this.state.isClicked) {
             this.props.selectProject(this);
         } else {
             this.props.unselectProject(this);
@@ -35,17 +54,9 @@ export default class ProjectPanel extends React.Component {
     renderAttributes() {
         var attributes = []
 
-        if(this.props.attributes) {
-            if (this.props.attributes.java) {
-                attributes.push(java);
-            }
-
-            if(this.props.attributes.css) {
-                attributes.push(css);
-            }
-
-            if(this.props.attributes.agile) {
-                attributes.push(agile);
+        if (this.props.attributes) {
+            for (var i = 0; i < this.props.attributes.length; i++) {
+                attributes.push(AttributeBadges.getBadge(this.props.attributes[i]));
             }
         }
 
@@ -69,7 +80,7 @@ export default class ProjectPanel extends React.Component {
                 <Panel.Footer>
                     <Label className="startDateLabel">{this.props.startDate}</Label>
                     <Label className="endDateLabel">{this.props.endDate}</Label>
-                    <p className="members">{this.props.members}</p>
+                    <p className="members">{this.formatMemebers(this.props.members)}</p>
                 </Panel.Footer>
             </div>
         </>
@@ -86,7 +97,6 @@ export default class ProjectPanel extends React.Component {
                         {this.renderContent()}
                     </Panel>
                 }
-
             </>
         );
     }

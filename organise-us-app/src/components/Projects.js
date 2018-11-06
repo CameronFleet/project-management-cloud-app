@@ -1,7 +1,17 @@
 import React from 'react';
-import {Button, FormControl, Glyphicon, DropdownButton, MenuItem, Modal} from 'react-bootstrap'
+import {
+    Button,
+    FormControl,
+    Glyphicon,
+    DropdownButton,
+    MenuItem,
+    Modal
+} from 'react-bootstrap'
 import "./Projects.css"
 import ProjectPanel from "../containers/ProjectPanel";
+
+import ProjectModal from "../containers/ProjectModal";
+
 
 export default class Projects extends React.Component {
 
@@ -9,7 +19,14 @@ export default class Projects extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {show: false, editing: false, filter: 'NONE', searchedTitle: "", selectedProjects: new Array()};
+        this.state = {
+            show: false,
+            editing: false,
+            filter: 'NONE',
+            searchedTitle: "",
+            selectedProjects: new Array(),
+            currentProject: this.blankProject()
+        };
     }
 
     selectProject = (project) => {
@@ -31,16 +48,12 @@ export default class Projects extends React.Component {
             const projectProps = {
                 title: "Cloud Application Development " + i,
                 description: "This is a long description, but not really too long",
-                members: "cc + sasa",
-                startDate: "10/10/10",
-                endDate: "15/10/10",
+                members: ["cc", "sasa"],
+                startDate: "2018-10-10",
+                endDate: "2019-10-10",
                 projectManager: "Sasa (#98F3812LRS)",
                 status: "finished",
-                attributes: {
-                    java: true,
-                    css: true,
-                    agile: true
-                }
+                attributes: ["java", "css", "agile"]
             };
 
             projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
@@ -51,9 +64,9 @@ export default class Projects extends React.Component {
             const projectProps = {
                 title: "Jacks Secret Plan " + i,
                 description: "This is a long description, but not really too long",
-                members: "cc + sasa",
-                startDate: "10/10/10",
-                endDate: "15/10/10",
+                members: ["cc"],
+                startDate: "2018-10-10",
+                endDate: "2019-10-10",
                 projectManager: "Peter",
                 status: "inProgress"
             };
@@ -67,22 +80,18 @@ export default class Projects extends React.Component {
             const projectProps = {
                 title: "Plan to kill Peter " + i,
                 description: "This is a long description, but not really too long",
-                members: "cc + sasa",
-                startDate: "10/10/10",
-                endDate: "15/10/10",
+                members: ["cc", "sasa", "wasa"],
+                startDate: "2018-10-10",
+                endDate: "2019-10-10",
                 projectManager: "Jack",
                 status: "notStarted",
-                attributes: {
-                    agile: true
-                }
+                attributes: ["css", "agile"]
             };
 
             projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
                                         unselectProject={this.unselectProject}/>);
 
         }
-
-        console.log(projects[3].props.title);
 
         return projects;
     }
@@ -96,9 +105,9 @@ export default class Projects extends React.Component {
     }
 
     compareMembers = (project1, project2) => {
-        if (project1.props.members > project2.props.members)
+        if (project1.props.members.length > project2.props.members.length)
             return -1;
-        if (project1.props.members < project2.props.members)
+        if (project1.props.members.length < project2.props.members.length)
             return 1;
         return 0;
     }
@@ -156,8 +165,31 @@ export default class Projects extends React.Component {
         else if (this.state.selectedProjects.length == 0) {
             alert("Please select project(s) to edit.")
         } else {
+            this.setState({
+                currentProject: this.state.selectedProjects[0].props
+            })
             this.showModal(true);
         }
+    }
+
+    showModal = editing => {
+        this.setState({show: true, editing: editing});
+    }
+
+    hideModal = () => {
+        this.setState({show: false, currentProject: this.blankProject()});
+    }
+
+    blankProject = () => {
+        return {
+            title: "",
+            projectManager: "",
+            members: [],
+            startDate: "",
+            endDate: "",
+            status: "",
+            attributes: []
+        };
     }
 
     renderControls() {
@@ -171,7 +203,7 @@ export default class Projects extends React.Component {
                 </Button>
 
                 <Button className="cloudButton">
-                    <Glyphicon glyph="cloud"/>
+                    <Glyphicon glyph="cloud-download"/>
                 </Button>
 
                 {this.props.isProjectManager &&
@@ -198,33 +230,7 @@ export default class Projects extends React.Component {
     }
 
 
-    showModal = editing => {
-        this.setState({show: true, editing: editing});
-    }
 
-    hideModal = () => {
-        this.setState({show: false});
-    }
-
-    renderModal() {
-        return (
-            <>
-                <Modal show={this.state.show} onHide={this.hideModal}>
-                    <Modal.Header>
-                        {this.state.editing
-                        ? <b>Editing project</b>
-                        : <b>Adding project</b>}
-                    </Modal.Header>
-                    <Modal.Body>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={this.hideModal}>Close</Button>
-                    </Modal.Footer>
-                </Modal>
-            </>
-        );
-    }
 
     render() {
 
@@ -238,7 +244,11 @@ export default class Projects extends React.Component {
                 <div className="Display">
                     {this.renderDisplay(projects)}
                 </div>
-                {this.renderModal()}
+
+                <Modal show={this.state.show} onHide={this.hideModal}>
+                    <ProjectModal currentProject={this.state.currentProject} editing={this.state.editing} hideModal={this.hideModal}/>
+                </Modal>
+
             </div>
         );
     }

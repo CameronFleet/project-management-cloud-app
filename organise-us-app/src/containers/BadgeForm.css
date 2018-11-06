@@ -1,0 +1,30 @@
+.ok {
+    background-color: darkgreen;
+    color: whitesmoke;
+}
+
+.tinyRemove {
+    width: 1px;
+    height: 1px;
+    margin-left: 3px;
+    margin-right: 20px;
+    color: lightgrey;
+}
+
+
+.remove {
+    background-color: darkred;
+    color: whitesmoke;
+}
+
+.addon-good {
+    background-color: darkgreen;
+}
+
+.addon-bad {
+    background-color: darkred;
+}
+
+.Badges {
+    margin-bottom: 5px;
+}
