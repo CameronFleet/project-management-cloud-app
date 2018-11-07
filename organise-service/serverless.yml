@@ -34,6 +34,7 @@ provider:
     - dynamodb:Scan
     - dynamodb:GetItem
     - dynamodb:PutItem
+    - dynamodb:UpdateItem
     Resource: arn:aws:dynamodb:eu-west-2:518548668754:table/User
 
   - Effect: Allow
@@ -50,7 +51,7 @@ provider:
 
 functions:
   createDev:
-    handler: handler.createDev
+    handler: users.createDev
     events:
       - http:
           path: users/create/dev
@@ -58,7 +59,7 @@ functions:
           cors: true
 
   createProjectManager:
-    handler: handler.createProjectManager
+    handler: users.createProjectManager
     events:
       - http:
           path: users/create/project-manager
@@ -66,12 +67,28 @@ functions:
           cors: true
 
   createAdmin:
-    handler: handler.createAdmin
+    handler: users.createAdmin
     events:
     - http:
-        path: users/create/admin
-        method: post
-        cors: true
+          path: users/create/admin
+          method: post
+          cors: true
+
+  getProfile:
+    handler: users.getProfile
+    events:
+    - http:
+          path: users/profile
+          method: post
+          cors: true
+
+  updateProfile:
+    handler: users.updateProfile
+    events:
+    - http:
+          path: users/update/profile
+          method: post
+          cors: true
 
   authorize:
     handler: authorizer.authorize
