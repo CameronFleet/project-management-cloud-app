@@ -1,3 +1,11 @@
 .Profile {
     margin: 4% 30%;
 }
+
+.Profile .save {
+    width: 300px;
+}
+
+.Profile .footer {
+    text-align: center;
+}

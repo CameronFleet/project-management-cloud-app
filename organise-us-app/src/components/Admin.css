@@ -1,0 +1,20 @@
+.Admin .Controls {
+    margin: 10px 0;
+}
+
+.Admin .Controls .search {
+    min-width: 50px;
+    max-width: 250px;
+    margin-right: 10px;
+    float: left;
+}
+
+.Admin .Controls .searchButton {
+    margin-right: 10px;
+    float: left
+}
+
+.Admin .Controls .cloudButton {
+    background-color: dodgerblue;
+    color: whitesmoke;
+}

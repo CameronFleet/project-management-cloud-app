@@ -21,4 +21,12 @@ export default class AttributeBadges {
         return attributeMapping;
     }
 
+    static getBadges(identifiers) {
+        var badges = [];
+
+        identifiers.forEach(id => badges.push(attributeMapping.get(id)));
+
+        return badges;
+    }
+
 }

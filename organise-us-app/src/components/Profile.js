@@ -103,8 +103,8 @@ export default class Profile extends React.Component {
 
                     </Panel.Body>
 
-                    <Panel.Footer>
-                        <Button bsStyle="primary" onClick={this.handleSubmit}>Submit</Button>
+                    <Panel.Footer className="footer">
+                        <Button bsStyle="primary" bsSize="large" onClick={this.handleSubmit} className="save">Save</Button>
                     </Panel.Footer>
                 </Panel>
             </div>

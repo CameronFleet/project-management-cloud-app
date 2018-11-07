@@ -69,8 +69,8 @@ export default class ProjectModal extends React.Component {
             <>
                 <Modal.Header>
                     {this.props.editing
-                        ? <b>Editing project</b>
-                        : <b>Adding project</b>}
+                        ? <h4>Editing project</h4>
+                        : <h4>Adding project</h4>}
                 </Modal.Header>
                 <Modal.Body>
                     <FormField label="Project Title" type="text" id="title" placeholder="Enter title"
