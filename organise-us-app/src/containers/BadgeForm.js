@@ -8,8 +8,21 @@ export default class BadgeForm extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {identifier: "", badges: []}
+        if (this.props.items) {
+            var existingBadges = [];
+
+            for (var i = 0; i < this.props.items.length; i++) {
+
+                var badgeId = this.props.items[i];
+                var badge = this.props.badgeMap.get(badgeId);
+                existingBadges.push({id: badgeId, badge: this.formatBadge(badgeId, badge)});
+            }
+
+        }
+
+        this.state = {identifier: "", badges: existingBadges};
     }
+
 
     formatBadge(badgeId, badge) {
         return (
@@ -32,22 +45,7 @@ export default class BadgeForm extends React.Component {
 
 
 
-    componentDidMount() {
 
-        if (this.props.items) {
-            var existingBadges = [];
-
-            for (var i = 0; i < this.props.items.length; i++) {
-
-                var badgeId = this.props.items[i];
-                var badge = this.props.badgeMap.get(badgeId);
-                existingBadges.push({id: badgeId, badge: this.formatBadge(badgeId, badge)});
-            }
-
-            this.setState({badges: existingBadges});
-
-        }
-    }
 
     validateForm = () => {
         var it = this.props.badgeMap.keys();

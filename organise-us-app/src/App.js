@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import './App.css';
-import {Navbar, Nav, NavItem} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, Glyphicon} from 'react-bootstrap';
 import {Link, withRouter} from 'react-router-dom';
 import {LinkContainer} from 'react-router-bootstrap';
 import Routes from "./Routes";
 import {Auth, API} from 'aws-amplify';
 
+import './App.css';
 
 function LinkItem({to, text, ...props}) {
     return (
@@ -116,7 +116,11 @@ class App extends Component {
                                 </>
                                 :
                                 <>
-                                    <LinkItem to="/profile" text="Profile" />
+                                    <LinkContainer to="/profile">
+                                        <NavItem className="profile-nav">
+                                            <Glyphicon glyph="user" className="profile"/>
+                                        </NavItem>
+                                    </LinkContainer>
                                     <NavItem onClick={this.handleLogout}>Logout </NavItem>
                                 </>
                             }
@@ -125,15 +129,15 @@ class App extends Component {
 
                         <Nav pullLeft>
                             {this.state.isAuthenticated &&
-                                <>
-                                    <LinkItem to="/projects" text="Projects" />
-                                </>
+                            <>
+                                <LinkItem to="/projects" text="Projects"/>
+                            </>
                             }
 
                             {this.state.isAdmin &&
-                                <>
-                                    <LinkItem to="/admin" text="Admin" />
-                                </> }
+                            <>
+                                <LinkItem to="/admin" text="Admin"/>
+                            </>}
 
                         </Nav>
                     </Navbar.Collapse>

@@ -7,3 +7,17 @@
 .App .navbar-brand {
     font-weight: bold;
 }
+
+.profile-nav {
+    max-height: 10px !important;
+    margin-top:0px !important;
+    margin-bottom: 0px !important;
+
+}
+.profile {
+    font-size: 17px;
+}
+
+.profile:hover {
+    color: darkgrey;
+}
