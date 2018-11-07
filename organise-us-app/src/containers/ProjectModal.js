@@ -5,6 +5,7 @@ import BadgeForm from "./BadgeForm";
 import AttributeBadges from "./AttributeBadges";
 import {Button, ButtonToolbar, ControlLabel, ToggleButton, ToggleButtonGroup} from "react-bootstrap";
 import React from "react";
+import {API} from "aws-amplify";
 
 
 export default class ProjectModal extends React.Component {
@@ -29,7 +30,7 @@ export default class ProjectModal extends React.Component {
     }
 
     handleStatus = value => {
-        this.setState({status: value});
+        this.setState({projectStatus: value});
     }
 
     handleChange = event => {
@@ -37,12 +38,27 @@ export default class ProjectModal extends React.Component {
 
     }
 
-    handleAddSubmit = () => {
+    handleAddSubmit = async () => {
         console.log(this.state);
+
+        try {
+            await API.post("projects", "/createProject", {body: this.state});
+            this.props.hideModal();
+        } catch (e) {
+            alert(e.message);
+        }
+
     }
 
-    handleEditSubmit = () => {
+    handleEditSubmit = async () => {
         console.log(this.state);
+
+        try {
+            await API.post("projects", "/updateProject", {body: this.state});
+            this.props.hideModal();
+        } catch(e) {
+            alert(e.message);
+        }
     }
 
     render() {
@@ -86,7 +102,7 @@ export default class ProjectModal extends React.Component {
                     <ControlLabel>Status</ControlLabel>
                     <ButtonToolbar>
                         <ToggleButtonGroup type="radio" name="statusOptions"
-                                           defaultValue={this.state.status}
+                                           defaultValue={this.state.projectStatus}
                                            onChange={this.handleStatus}>
                             <ToggleButton value="notStarted">Not Started</ToggleButton>
                             <ToggleButton value="inProgress">In Progress</ToggleButton>

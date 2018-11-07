@@ -116,6 +116,7 @@ class App extends Component {
                                 </>
                                 :
                                 <>
+                                    <LinkItem to="/profile" text="Profile" />
                                     <NavItem onClick={this.handleLogout}>Logout </NavItem>
                                 </>
                             }
@@ -128,11 +129,6 @@ class App extends Component {
                                     <LinkItem to="/projects" text="Projects" />
                                 </>
                             }
-
-                            {(this.state.isProjectManager || this.state.isAdmin) &&
-                                <>
-                                    <LinkItem to="/manager" text="Manager" />
-                                </>}
 
                             {this.state.isAdmin &&
                                 <>

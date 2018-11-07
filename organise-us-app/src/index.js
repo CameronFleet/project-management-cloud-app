@@ -19,9 +19,14 @@ Amplify.configure({
         endpoints: [
             {
                 name: "users",
-                endpoint: config.apiGateway.URL,
+                endpoint: config.apiGateway.USERS_URL,
                 region: config.apiGateway.REGION
             },
+            {
+                name: "projects",
+                endpoint: config.apiGateway.PROJECTS_URL,
+                region: config.apiGateway.REGION
+            }
         ]
     }
 });

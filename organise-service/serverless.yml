@@ -36,6 +36,18 @@ provider:
     - dynamodb:PutItem
     Resource: arn:aws:dynamodb:eu-west-2:518548668754:table/User
 
+  - Effect: Allow
+    Action:
+    - dynamodb:DescribeTable
+    - dynamodb:Query
+    - dynamodb:Scan
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+    - dynamodb:DeleteItem
+    - dynamodb:UpdateItem
+    Resource: arn:aws:dynamodb:eu-west-2:518548668754:table/Projects
+
+
 functions:
   createDev:
     handler: handler.createDev
@@ -68,6 +80,39 @@ functions:
           path: users/authorize
           method: post
           cors: true
+
+  createProject:
+    handler: projects.createProject
+    events:
+      - http:
+          path: projects/createProject
+          method: post
+          cors: true
+
+  updateProject:
+    handler: projects.updateProject
+    events:
+    - http:
+        path: projects/updateProject
+        method: post
+        cors: true
+
+  getAllProjects:
+    handler: projects.getAllProjects
+    events:
+    - http:
+        path: projects/getAll
+        method: get
+        cors: true
+
+  deleteProject:
+    handler: projects.deleteProject
+    events:
+    - http:
+        path: projects/delete
+        method: post
+        cors: true
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

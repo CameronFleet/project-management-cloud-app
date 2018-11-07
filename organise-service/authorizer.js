@@ -1,5 +1,3 @@
-
-
 var AWS = require('aws-sdk');
 var response = require('./lib/response');
 

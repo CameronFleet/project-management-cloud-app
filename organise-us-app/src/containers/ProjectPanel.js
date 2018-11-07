@@ -66,7 +66,8 @@ export default class ProjectPanel extends React.Component {
     renderContent = () =>
         <>
             <Panel.Heading>{this.props.title}</Panel.Heading>
-            <Panel.Heading className="project-manager">{this.props.projectManager}</Panel.Heading>
+            <Panel.Heading className="projectManager">{this.props.projectManager}</Panel.Heading>
+            <Panel.Body className="id">{this.props.id}</Panel.Body>
             <Panel.Body>{this.props.description}</Panel.Body>
 
             {this.props.attributes &&
@@ -93,7 +94,7 @@ export default class ProjectPanel extends React.Component {
                         {this.renderContent()}
                     </Panel>
                     :
-                    <Panel bsStyle={statusMapping.get(this.props.status)} onClick={this.handleClick}>
+                    <Panel bsStyle={statusMapping.get(this.props.projectStatus)} onClick={this.handleClick}>
                         {this.renderContent()}
                     </Panel>
                 }

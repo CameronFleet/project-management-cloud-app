@@ -5,8 +5,11 @@ import {
     Glyphicon,
     DropdownButton,
     MenuItem,
-    Modal
+    Modal,
+    Alert
 } from 'react-bootstrap'
+import {API} from 'aws-amplify'
+
 import "./Projects.css"
 import ProjectPanel from "../containers/ProjectPanel";
 
@@ -22,11 +25,19 @@ export default class Projects extends React.Component {
         this.state = {
             show: false,
             editing: false,
+            isDeleting: false,
             filter: 'NONE',
             searchedTitle: "",
-            selectedProjects: new Array(),
+            selectedProjects: [],
+            projects: [],
             currentProject: this.blankProject()
         };
+
+
+    }
+
+    componentDidMount() {
+        this.syncWithCloud();
     }
 
     selectProject = (project) => {
@@ -39,61 +50,28 @@ export default class Projects extends React.Component {
         this.setState({selectedProjects: array});
     }
 
-    generateProjects = () => {
-        var projects = new Array();
+    syncWithCloud = async () => {
+        try {
+            const result = await API.get("projects", "/getAll", {});
+
+            console.log(result);
+
+            const projects = result.projects;
+            console.log(projects);
+
+            var projectPanels = [];
+
+            for (var i = 0; i < projects.length; i++) {
+                projectPanels.push(<ProjectPanel {...projects[i]} selectProject={this.selectProject}
+                                                 unselectProject={this.unselectProject}/>)
+            }
+
+            this.setState({projects: projectPanels});
 
 
-        for (var i = 1; i < 10; i++) {
-
-            const projectProps = {
-                title: "Cloud Application Development " + i,
-                description: "This is a long description, but not really too long",
-                members: ["cc", "sasa"],
-                startDate: "2018-10-10",
-                endDate: "2019-10-10",
-                projectManager: "Sasa (#98F3812LRS)",
-                status: "finished",
-                attributes: ["java", "css", "agile"]
-            };
-
-            projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
-                                        unselectProject={this.unselectProject}/>);
+        } catch (e) {
+            alert(e);
         }
-
-        for (; i < 20; i++) {
-            const projectProps = {
-                title: "Jacks Secret Plan " + i,
-                description: "This is a long description, but not really too long",
-                members: ["cc"],
-                startDate: "2018-10-10",
-                endDate: "2019-10-10",
-                projectManager: "Peter",
-                status: "inProgress"
-            };
-
-            projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
-                                        unselectProject={this.unselectProject}/>);
-
-        }
-
-        for (; i < 30; i++) {
-            const projectProps = {
-                title: "Plan to kill Peter " + i,
-                description: "This is a long description, but not really too long",
-                members: ["cc", "sasa", "wasa"],
-                startDate: "2018-10-10",
-                endDate: "2019-10-10",
-                projectManager: "Jack",
-                status: "notStarted",
-                attributes: ["css", "agile"]
-            };
-
-            projects.push(<ProjectPanel {...projectProps} selectProject={this.selectProject}
-                                        unselectProject={this.unselectProject}/>);
-
-        }
-
-        return projects;
     }
 
     compareTitle = (project1, project2) => {
@@ -137,6 +115,18 @@ export default class Projects extends React.Component {
                 newProjects = newProjects.sort(this.compareMembers);
                 break;
 
+            case "FINISHED":
+                newProjects = newProjects.filter(project => (project.props.projectStatus === "finished"));
+                break;
+
+            case "IN PROGRESS":
+                newProjects = newProjects.filter(project => (project.props.projectStatus === "inProgress"));
+                break;
+
+            case "NOT STARTED":
+                newProjects = newProjects.filter(project => (project.props.projectStatus === "notStarted"));
+                break;
+
         }
 
         return newProjects;
@@ -152,9 +142,26 @@ export default class Projects extends React.Component {
         this.showModal(false);
     }
 
-    handleRemove = () => {
-        if (this.state.selectedProjects.length == 0) {
+    handleRemove = async () => {
+
+
+        if (this.state.selectedProjects.length == 1) {
+            this.setState({isDeleting: true});
+        } else if (this.state.selectedProjects.length == 0) {
             alert("Please select project(s) to delete.");
+        } else if (this.state.selectedProjects.length > 1) {
+            alert("Only one project may be deleted at a time");
+        }
+    }
+
+    handleDelete = async () => {
+        try {
+            var params = {body: {id: this.state.selectedProjects[0].props.id}};
+            await API.post("projects", "/delete", params)
+            this.syncWithCloud();
+            this.setState({isDeleting: false});
+        } catch (e) {
+            alert(e);
         }
     }
 
@@ -178,16 +185,18 @@ export default class Projects extends React.Component {
 
     hideModal = () => {
         this.setState({show: false, currentProject: this.blankProject()});
+        this.syncWithCloud();
     }
 
     blankProject = () => {
         return {
+            id: "",
             title: "",
             projectManager: "",
             members: [],
             startDate: "",
             endDate: "",
-            status: "",
+            projectStatus: "",
             attributes: []
         };
     }
@@ -202,14 +211,14 @@ export default class Projects extends React.Component {
                     <Glyphicon glyph="search"/>
                 </Button>
 
-                <Button className="cloudButton">
+                <Button className="cloudButton" onClick={this.syncWithCloud}>
                     <Glyphicon glyph="cloud-download"/>
                 </Button>
 
                 {this.props.isProjectManager &&
                 <>
                     <Button className="addButton" onClick={this.handleAdd}>
-                        <Glyphicon glyph="plus" />
+                        <Glyphicon glyph="plus"/>
                     </Button>
 
                     <Button className="removeButton" onClick={this.handleRemove}>
@@ -225,16 +234,19 @@ export default class Projects extends React.Component {
                     <MenuItem onClick={() => this.setFilter("NONE")}>None</MenuItem>
                     <MenuItem onClick={() => this.setFilter("TITLE")}>Title</MenuItem>
                     <MenuItem onClick={() => this.setFilter("MEMBERS")}>Members</MenuItem>
+                    <MenuItem onClick={() => this.setFilter("FINISHED")}>Finished</MenuItem>
+                    <MenuItem onClick={() => this.setFilter("IN PROGRESS")}>In Progress</MenuItem>
+                    <MenuItem onClick={() => this.setFilter("NOT STARTED")}>Not Started</MenuItem>
+
+
                 </DropdownButton>
             </>);
     }
 
 
-
-
     render() {
 
-        var projects = this.generateProjects();
+        var projects = this.state.projects;
 
         return (
             <div className="Projects">
@@ -246,8 +258,22 @@ export default class Projects extends React.Component {
                 </div>
 
                 <Modal show={this.state.show} onHide={this.hideModal}>
-                    <ProjectModal currentProject={this.state.currentProject} editing={this.state.editing} hideModal={this.hideModal}/>
+                    <ProjectModal currentProject={this.state.currentProject} editing={this.state.editing}
+                                  hideModal={this.hideModal}/>
                 </Modal>
+
+                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} bsSize="sm">
+                        <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})}>
+                            <h4>Are you sure you want to delete this project?</h4>
+                            <p>
+                                If you continue with this action there is no way of recovering the project.
+                            </p>
+                            <p>
+                                <Button bsStyle="danger" onClick={this.handleDelete}>DELETE</Button>
+                            </p>
+                        </Alert>
+                </Modal>
+
 
             </div>
         );

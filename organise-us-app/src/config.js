@@ -1,7 +1,8 @@
 export default {
     apiGateway: {
         REGION: "eu-west-2",
-        URL: "https://6u48rub058.execute-api.eu-west-2.amazonaws.com/dev/users"
+        USERS_URL: "https://6u48rub058.execute-api.eu-west-2.amazonaws.com/dev/users",
+        PROJECTS_URL: "https://6u48rub058.execute-api.eu-west-2.amazonaws.com/dev/projects"
     },
     cognito: {
         REGION: "eu-west-2",

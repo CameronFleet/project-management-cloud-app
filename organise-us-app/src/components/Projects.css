@@ -53,14 +53,7 @@
 .Projects .Controls .filterButton {
     margin-left: 10px;
     margin-right: 10px;
-    width: 100px;
-}
-
-.Projects .Controls .filterBadge {
-    margin-left: 10px;
-    margin-right: 5px;
-    padding-left: 15px;
-    padding-right: 15px;
+    width: 130px;
 }
 
 .Projects .navbar {
@@ -72,4 +65,9 @@
     margin: 10px;
     max-width: 330px;
     float: left;
+}
+
+.Projects .deleteAlert {
+    padding: 0;
+    height: 50%;
 }

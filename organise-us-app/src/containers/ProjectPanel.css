@@ -1,5 +1,11 @@
 
-.panel .project-manager {
+.panel .id {
+    text-align: center;
+    font-size: 70%;
+    color: darkgrey;
+}
+
+.panel .projectManager {
     color: black;
     background-color: white;
 }
