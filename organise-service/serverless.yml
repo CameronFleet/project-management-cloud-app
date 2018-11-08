@@ -114,6 +114,14 @@ functions:
         method: post
         cors: true
 
+  joinProject:
+    handler: projects.joinProject
+    events:
+    - http:
+        path: projects/join
+        method: post
+        cors: true
+
   createProject:
     handler: projects.createProject
     events:

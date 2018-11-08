@@ -1,81 +1,37 @@
-var response = require('./lib/response');
-var AWS = require('aws-sdk');
+var db = require('./lib/dblib');
 
-const ddb = new AWS.DynamoDB.DocumentClient();
+const TABLE_NAME = "User";
 
 module.exports.createDev = async (event, context) => {
     return createUser(event, context, "dev");
 };
 
-module.exports.createProjectManager = async(event, context) => {
+module.exports.createProjectManager = async (event, context) => {
     return createUser(event, context, "project-manager");
 }
 
-module.exports.createAdmin = async(event, context) => {
+module.exports.createAdmin = async (event, context) => {
     return createUser(event, context, "admin");
 }
 
 async function createUser(event, context, role) {
 
     const data = JSON.parse(event.body);
-
-    const params = {
-        TableName: "User",
-        Item: {
-            id: data.id,
-            userRole: role
-        }
-    }
-
-    try {
-        await ddb.put(params).promise();
-        return response.respondSuccess(params.Item);
-
-    } catch(e) {
-        console.log(e);
-        return response.respondFailure({status: false});
-    }
+    return await db.putItem({id: data.id, userRole: role}, TABLE_NAME);
 }
 
-
-module.exports.getProfile = async(event, context) => {
+module.exports.getProfile = async (event, context) => {
 
     const data = JSON.parse(event.body);
-
-    const params = {
-        TableName: "User",
-        Key : {
-            id: data.id
-        }
-    }
-
-    try {
-        const result = await ddb.get(params).promise();
-        return response.respondSuccess({profile: result});
-    } catch(e) {
-        console.log(e);
-        return response.respondFailure({status: false});
-    }
+    return await db.getItem({id: data.id}, TABLE_NAME);
 }
 
-module.exports.getAllUsers = async(event, context) => {
-    const params = {
-        TableName: "User"
-    }
+module.exports.getAllUsers = async () => {
 
-    try {
-        const result = await ddb.scan(params).promise();
-        console.log(result);
-        return response.respondSuccess({users: result.Items});
-
-    } catch(e) {
-        console.log(e);
-        return response.respondFailure({status: false});
-    }
-
+    return await db.getAllItems("users", TABLE_NAME);
 }
 
-module.exports.updateProfile = async(event, context) => {
+module.exports.updateProfile = async (event, context) => {
 
     const data = JSON.parse(event.body);
 
@@ -83,7 +39,7 @@ module.exports.updateProfile = async(event, context) => {
 
     const params = {
         TableName: "User",
-        Key : {
+        Key: {
             id: data.id
         },
         UpdateExpression: "SET displayName = :displayName, pitch = :pitch, attributes = :attributes",
@@ -96,16 +52,10 @@ module.exports.updateProfile = async(event, context) => {
         ReturnValues: "ALL_NEW"
     }
 
-    try {
-        await ddb.update(params).promise();
-        return response.respondSuccess({success: true});
-    } catch(e) {
-        console.log(e);
-        return response.respondFailure({status: false});
-    }
+    return await db.updateItem(params);
 }
 
-module.exports.updateUser = async(event, context) => {
+module.exports.updateUser = async (event, context) => {
 
     const data = JSON.parse(event.body);
 
@@ -113,7 +63,7 @@ module.exports.updateUser = async(event, context) => {
 
     const params = {
         TableName: "User",
-        Key : {
+        Key: {
             id: data.id
         },
         UpdateExpression: "SET displayName = :displayName, pitch = :pitch, attributes = :attributes, userRole = :userRole",
@@ -127,11 +77,5 @@ module.exports.updateUser = async(event, context) => {
         ReturnValues: "ALL_NEW"
     }
 
-    try {
-        await ddb.update(params).promise();
-        return response.respondSuccess({success: true});
-    } catch(e) {
-        console.log(e);
-        return response.respondFailure({status: false});
-    }
+    return await db.updateItem(params);
 }
