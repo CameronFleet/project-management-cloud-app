@@ -53,58 +53,74 @@ functions:
   createDev:
     handler: users.createDev
     events:
-      - http:
-          path: users/create/dev
-          method: post
-          cors: true
+    - http:
+        path: users/create/dev
+        method: post
+        cors: true
 
   createProjectManager:
     handler: users.createProjectManager
     events:
-      - http:
-          path: users/create/project-manager
-          method: post
-          cors: true
+    - http:
+        path: users/create/project-manager
+        method: post
+        cors: true
 
   createAdmin:
     handler: users.createAdmin
     events:
     - http:
-          path: users/create/admin
-          method: post
-          cors: true
+        path: users/create/admin
+        method: post
+        cors: true
 
   getProfile:
     handler: users.getProfile
     events:
     - http:
-          path: users/profile
-          method: post
-          cors: true
+        path: users/profile
+        method: post
+        cors: true
 
   updateProfile:
     handler: users.updateProfile
     events:
     - http:
-          path: users/update/profile
-          method: post
-          cors: true
+        path: users/update/profile
+        method: post
+        cors: true
+
+  updateUser:
+    handler: users.updateUser
+    events:
+    - http:
+        path: users/update/user
+        method: post
+        cors: true
+
+  getAllUsers:
+    handler: users.getAllUsers
+    events:
+    - http:
+        path: users/getAll
+        method: get
+        cors: true
 
   authorize:
     handler: authorizer.authorize
     events:
-      - http:
-          path: users/authorize
-          method: post
-          cors: true
+    - http:
+        path: users/authorize
+        method: post
+        cors: true
 
   createProject:
     handler: projects.createProject
     events:
-      - http:
-          path: projects/createProject
-          method: post
-          cors: true
+    - http:
+        path: projects/createProject
+        method: post
+        cors: true
 
   updateProject:
     handler: projects.updateProject

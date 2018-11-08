@@ -23,7 +23,7 @@ async function createUser(event, context, role) {
         TableName: "User",
         Item: {
             id: data.id,
-            role: role
+            userRole: role
         }
     }
 
@@ -58,6 +58,23 @@ module.exports.getProfile = async(event, context) => {
     }
 }
 
+module.exports.getAllUsers = async(event, context) => {
+    const params = {
+        TableName: "User"
+    }
+
+    try {
+        const result = await ddb.scan(params).promise();
+        console.log(result);
+        return response.respondSuccess({users: result.Items});
+
+    } catch(e) {
+        console.log(e);
+        return response.respondFailure({status: false});
+    }
+
+}
+
 module.exports.updateProfile = async(event, context) => {
 
     const data = JSON.parse(event.body);
@@ -74,6 +91,37 @@ module.exports.updateProfile = async(event, context) => {
             ":displayName": data.displayName || null,
             ":pitch": data.pitch || null,
             ":attributes": data.attributes || null
+        },
+
+        ReturnValues: "ALL_NEW"
+    }
+
+    try {
+        await ddb.update(params).promise();
+        return response.respondSuccess({success: true});
+    } catch(e) {
+        console.log(e);
+        return response.respondFailure({status: false});
+    }
+}
+
+module.exports.updateUser = async(event, context) => {
+
+    const data = JSON.parse(event.body);
+
+    console.log(data);
+
+    const params = {
+        TableName: "User",
+        Key : {
+            id: data.id
+        },
+        UpdateExpression: "SET displayName = :displayName, pitch = :pitch, attributes = :attributes, userRole = :userRole",
+        ExpressionAttributeValues: {
+            ":displayName": data.displayName || null,
+            ":pitch": data.pitch || null,
+            ":attributes": data.attributes || null,
+            ":userRole": data.role || null
         },
 
         ReturnValues: "ALL_NEW"

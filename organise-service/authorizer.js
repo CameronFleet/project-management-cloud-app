@@ -19,7 +19,10 @@ module.exports.authorize = async (event, context) => {
 
         if(dbResponse.Item) {
 
-            const userAccessLevel = dbResponse.Item.role;
+            const userAccessLevel = dbResponse.Item.userRole;
+
+            console.log("USER: " + userAccessLevel);
+            console.log("REQUIRED: " + data.accessLevel);
 
             if(userAccessLevel === data.accessLevel) {
                 return response.respondSuccess({allowed: true});
