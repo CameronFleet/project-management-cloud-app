@@ -1,0 +1,28 @@
+.unapprovedMember:hover {
+    background-color: forestgreen;
+    opacity: 0.3;
+}
+
+.unapprovedMember {
+    background-color: lightgrey;
+}
+
+.approvedMember:hover {
+    background-color: lightgrey;
+    opacity: 0.3;
+
+}
+
+.approvedMember {
+    background-color: forestgreen;
+}
+
+
+
+.members {
+    text-align: center;
+}
+.approveIcon {
+    margin-top: 5px;
+    margin-left: 5px;
+}

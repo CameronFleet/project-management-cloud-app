@@ -8,12 +8,13 @@ import {
     Modal,
     Alert
 } from 'react-bootstrap'
-import {API} from 'aws-amplify'
+import { API, Auth } from 'aws-amplify'
 
 import "./Projects.css"
 import ProjectPanel from "../containers/ProjectPanel";
 
 import ProjectModal from "../containers/ProjectModal";
+import ApproveModal from "../containers/ApproveModal";
 
 
 export default class Projects extends React.Component {
@@ -24,20 +25,23 @@ export default class Projects extends React.Component {
 
         this.state = {
             show: false,
+            showApprove: false,
             editing: false,
             isDeleting: false,
             filter: 'NONE',
             searchedTitle: "",
             selectedProjects: [],
             projects: [],
-            currentProject: this.blankProject()
+            currentProject: this.blankProject(),
+            alert: false,
+            alertMessage: {success: false, message: ""}
         };
 
 
     }
 
     componentDidMount() {
-        this.syncWithCloud();
+        this.syncWithCloud(true);
     }
 
     selectProject = (project) => {
@@ -50,7 +54,16 @@ export default class Projects extends React.Component {
         this.setState({selectedProjects: array});
     }
 
-    syncWithCloud = async () => {
+    showAlert = (success, message) => {
+        this.setState({alert: true, alertMessage: {success: success, message: message}});
+    }
+
+    hideAlert = () => {
+        this.setState({alert: false, alertMessage: {success: false, message: ""}});
+
+    }
+
+    syncWithCloud = async (silent) => {
         try {
             const result = await API.get("projects", "/getAll", {});
 
@@ -65,9 +78,10 @@ export default class Projects extends React.Component {
                 projectPanels.push(<ProjectPanel {...projects[i]} selectProject={this.selectProject}
                                                  unselectProject={this.unselectProject}/>)
             }
-
             this.setState({projects: projectPanels});
 
+            if(!silent)
+                this.showAlert(true, "Synced successfully");
 
         } catch (e) {
             alert(e);
@@ -148,9 +162,9 @@ export default class Projects extends React.Component {
         if (this.state.selectedProjects.length == 1) {
             this.setState({isDeleting: true});
         } else if (this.state.selectedProjects.length == 0) {
-            alert("Please select project(s) to delete.");
+            this.showAlert(false,"Please select project(s) to delete.");
         } else if (this.state.selectedProjects.length > 1) {
-            alert("Only one project may be deleted at a time");
+            this.showAlert(false, "Only one project may be deleted at a time");
         }
     }
 
@@ -158,24 +172,52 @@ export default class Projects extends React.Component {
         try {
             var params = {body: {id: this.state.selectedProjects[0].props.id}};
             await API.post("projects", "/delete", params)
-            this.syncWithCloud();
-            this.setState({isDeleting: false});
+            this.syncWithCloud(true);
+            this.setState({isDeleting: false, selectedProjects: []});
         } catch (e) {
-            alert(e);
+            this.showAlert(false, e.message);
         }
     }
 
     handleEdit = () => {
         if (this.state.selectedProjects.length > 1) {
-            alert("Please select just one project to edit.");
+            this.showAlert(false,"Please select just one project to edit.");
         }
         else if (this.state.selectedProjects.length == 0) {
-            alert("Please select project(s) to edit.")
+            this.showAlert(false,"Please select project(s) to edit.")
         } else {
             this.setState({
                 currentProject: this.state.selectedProjects[0].props
             })
             this.showModal(true);
+        }
+    }
+
+    handleJoin = async () => {
+        if(this.state.selectedProjects.length == 1) {
+            try {
+                const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
+                await API.post("projects", "/join", {body: {userId: id, projectId: this.state.selectedProjects[0].props.id}});
+                this.syncWithCloud(true);
+                this.showAlert(true, "Requested to join project, the project manager has been emailed. ");
+            } catch(e) {
+                this.showAlert(false, e.message);
+            }
+        }
+        else {
+            this.showAlert(false,"Please select just one project to join.");
+        }
+    }
+
+    handleApprove = async () => {
+        if (this.state.selectedProjects.length > 1) {
+            this.showAlert(false,"Please select just one project to approve.");
+        }
+        else if (this.state.selectedProjects.length == 0) {
+            this.showAlert(false,"Please select project(s) to approve.")
+        } else {
+            this.setState({currentProject: this.state.selectedProjects[0].props})
+            this.setState({showApprove: true});
         }
     }
 
@@ -185,7 +227,7 @@ export default class Projects extends React.Component {
 
     hideModal = () => {
         this.setState({show: false, currentProject: this.blankProject()});
-        this.syncWithCloud();
+        this.syncWithCloud(true);
     }
 
     blankProject = () => {
@@ -211,12 +253,17 @@ export default class Projects extends React.Component {
                     <Glyphicon glyph="search"/>
                 </Button>
 
-                <Button className="cloudButton" onClick={this.syncWithCloud}>
+                <Button className="cloudButton" onClick={() => this.syncWithCloud(false)}>
                     <Glyphicon glyph="cloud-download"/>
                 </Button>
 
+
                 {this.props.isProjectManager &&
                 <>
+                    <Button className="approveButton" onClick={this.handleApprove}>
+                        <Glyphicon glyph="ok-circle"/>
+                    </Button>
+
                     <Button className="addButton" onClick={this.handleAdd}>
                         <Glyphicon glyph="plus"/>
                     </Button>
@@ -228,7 +275,13 @@ export default class Projects extends React.Component {
                     <Button className="editButton" onClick={this.handleEdit}>
                         <Glyphicon glyph="pencil"/>
                     </Button>
+
+
                 </>}
+
+                <Button className="joinButton" onClick={this.handleJoin}>
+                    <Glyphicon glyph="log-in" />
+                </Button>
 
                 <DropdownButton title={this.state.filter.toLowerCase()} bsStyle="primary" className="filterButton">
                     <MenuItem onClick={() => this.setFilter("NONE")}>None</MenuItem>
@@ -253,6 +306,12 @@ export default class Projects extends React.Component {
                 <div className="Controls">
                     {this.renderControls()}
                 </div>
+
+                {this.state.alert &&
+                <Alert bsStyle={this.state.alertMessage.success ? "success" : "danger"} onDismiss={this.hideAlert}>
+                    {this.state.alertMessage.message}
+                </Alert>}
+
                 <div className="Display">
                     {this.renderDisplay(projects)}
                 </div>
@@ -262,16 +321,20 @@ export default class Projects extends React.Component {
                                   hideModal={this.hideModal}/>
                 </Modal>
 
-                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} bsSize="sm">
-                        <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})}>
-                            <h4>Are you sure you want to delete this project?</h4>
-                            <p>
-                                If you continue with this action there is no way of recovering the project.
-                            </p>
-                            <p>
-                                <Button bsStyle="danger" onClick={this.handleDelete}>DELETE</Button>
-                            </p>
-                        </Alert>
+                <Modal show={this.state.showApprove}  onHide={() => this.setState({showApprove: false})}>
+                    <ApproveModal currentProject={this.state.currentProject} />
+                </Modal>
+
+                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} >
+                    <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})}>
+                        <h4>Are you sure you want to delete this project?</h4>
+                        <p>
+                            If you continue with this action there is no way of recovering the project.
+                        </p>
+                        <p>
+                            <Button bsStyle="danger" onClick={this.handleDelete}>DELETE</Button>
+                        </p>
+                    </Alert>
                 </Modal>
 
 

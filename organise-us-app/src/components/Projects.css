@@ -9,6 +9,11 @@
     max-width: 250px;
     float: left;
 }
+
+.Projects .Controls .joinButton {
+    margin-left: 10px;
+}
+
 .Projects .Controls .searchButton {
     margin-left: 10px;
     float: left;
@@ -24,14 +29,16 @@
 }
 
 .Projects .Controls .addButton {
-    background-color: darkgreen;
-    border: darkgreen;
+    margin-left: 10px;
+
+    background-color: forestgreen;
+    border: forestgreen;
     color: whitesmoke;
 
 }
 
 .Projects .Controls .removeButton {
-    margin-left: 5px;
+    margin-left: 10px;
 
     background-color: darkred;
     border: darkred;
@@ -39,10 +46,18 @@
 }
 
 .Projects .Controls .editButton {
-    margin-left: 5px;
+    margin-left:10px;
 
     background-color: orange;
     border: orange;
+    color: whitesmoke;
+}
+
+.Projects .Controls .approveButton {
+    margin-left:10px;
+
+    background-color: forestgreen;
+    border: forestgreen;
     color: whitesmoke;
 }
 
