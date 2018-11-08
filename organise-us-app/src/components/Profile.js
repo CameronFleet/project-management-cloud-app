@@ -17,7 +17,7 @@ export default class Profile extends React.Component {
         this.state = {  displayName: "",
                         attributes: [],
                         pitch: "",
-                        role: "",
+                        userRole: "",
                         attributeForm: <> </>,
                         showSuccess: false,
                         showFailure: false};
@@ -93,7 +93,7 @@ export default class Profile extends React.Component {
                     </Panel.Heading>
                     <Panel.Body>
                         <ControlLabel>Role</ControlLabel>
-                        <Well>{this.state.role}</Well>
+                        <Well>{this.state.userRole}</Well>
                         <FormField label="Display Name" type="text" id="displayName" placeholder="Enter display name"
                                    value={this.state.displayName} onChange={this.handleChange}/>
                         <FormField label="Pitch" type="text" id="pitch" placeholder="Enter pitch"

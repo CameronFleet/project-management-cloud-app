@@ -3,6 +3,7 @@ import {ButtonToolbar, Modal, ToggleButton, ToggleButtonGroup, Well, Button} fro
 import FormField from "./FormField";
 import AttributeBadges from "./AttributeBadges";
 import BadgeForm from "./BadgeForm";
+import { API } from 'aws-amplify';
 
 export default class UserModal extends React.Component {
 
@@ -20,6 +21,17 @@ export default class UserModal extends React.Component {
 
     handleChange = event => {
         this.setState({[event.target.id]: event.target.value});
+    }
+
+    handleSave = async () => {
+        try {
+            await API.post("users", "/update/user", {body: {...this.state}});
+            this.props.showSuccess();
+            this.props.handleSave();
+        } catch(e) {
+            this.props.showFailure();
+            alert(e.message);
+        }
     }
 
     render() {
@@ -45,9 +57,9 @@ export default class UserModal extends React.Component {
 
                     <ButtonToolbar>
                         <ToggleButtonGroup type="radio" name="statusOptions"
-                                           defaultValue={this.state.role}
+                                           defaultValue={this.state.userRole}
                                            onChange={value => this.setState({role: value})}>
-                            <ToggleButton value="developer">Developer</ToggleButton>
+                            <ToggleButton value="dev">Developer</ToggleButton>
                             <ToggleButton value="project-manager">Project Manager</ToggleButton>
                             <ToggleButton value="admin">Admin</ToggleButton>
                         </ToggleButtonGroup>
@@ -56,7 +68,7 @@ export default class UserModal extends React.Component {
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button bsStyle="primary">Save</Button>
+                    <Button bsStyle="primary" onClick={this.handleSave}>Save</Button>
                 </Modal.Footer>
             </>
         );

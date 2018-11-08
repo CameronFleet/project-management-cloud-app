@@ -24,26 +24,33 @@ class App extends Component {
 
     authorize = async () => {
         const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
+        console.log(id);
 
         if (id !== null) {
+
+            const projectManager = await API.post("users", "/authorize", {
+                body: {
+                    id: id,
+                    accessLevel: "project-manager"
+                }
+            }).then(response => true).catch(e => false);
+
+            console.log(projectManager);
+
+            const admin = await API.post("users", "/authorize", {
+                body: {
+                    id: id,
+                    accessLevel: "admin"
+                }
+            }).then(response => true).catch(e => false);
+
+            console.log(admin);
+
             this.setState({
-
-                isProjectManager: await API.post("users", "/authorize", {
-                    body: {
-                        id: id,
-                        accessLevel: "project-manager"
-                    }
-                }).then(response => true).catch(e => false),
-
-                isAdmin: await API.post("users", "/authorize", {
-                    body: {
-                        id: id,
-                        accessLevel: "admin"
-                    }
-                }).then(response => true).catch(e => false)
-
-
+                isProjectManager: projectManager,
+                isAdmin: admin
             });
+
         } else {
             this.unauthorize();
         }
