@@ -19,9 +19,10 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {isAuthenticated: false, isProjectManager: false, isAdmin: false}
+        this.state = {isAuthenticated: false, isProjectManager: false, isAdmin: false, authorizedUser: null}
     }
 
+    //TODO: Rewrite authorization!
     authorize = async () => {
         const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
         console.log(id);
@@ -46,9 +47,16 @@ class App extends Component {
 
             console.log(admin);
 
+            const user = await API.post("users", "/profile", {
+                body: {
+                    id: id
+                }
+            }).then(response => response.profile.Item).catch(e => null);
+
             this.setState({
                 isProjectManager: projectManager,
-                isAdmin: admin
+                isAdmin: admin,
+                authorizedUser: user
             });
 
         } else {
@@ -100,7 +108,8 @@ class App extends Component {
             setAuthenticated: this.setAuthenticated,
             authorize: this.authorize,
             isProjectManager: this.state.isProjectManager || this.state.isAdmin,
-            isAdmin: this.state.isAdmin
+            isAdmin: this.state.isAdmin,
+            authorizedUser: this.state.authorizedUser
         };
 
         return (

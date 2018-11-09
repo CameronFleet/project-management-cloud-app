@@ -66,24 +66,17 @@ export default class ProjectModal extends React.Component {
     handleApprove = async () => {
 
         try {
-
-            const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
-
             console.log(this.state.approvalIndices);
             console.log(this.state.membersToApprove);
             console.log(this.props.currentProject);
-            if (id) {
-                await API.post("projects", "/approveMembers", {
-                    body: {
-                        userId: id,
-                        projectId: this.props.currentProject.id,
-                        approvalIndices: this.state.approvalIndices,
-                        approvedMembers: this.state.membersToApprove
-                    }
-                })
-
-            }
-
+            await API.post("projects", "/approveMembers", {
+                body: {
+                    userId: this.props.authorizedUser.id,
+                    projectId: this.props.currentProject.id,
+                    approvalIndices: this.state.approvalIndices,
+                    approvedMembers: this.state.membersToApprove
+                }
+            })
             this.props.hideModal();
 
         } catch (e) {

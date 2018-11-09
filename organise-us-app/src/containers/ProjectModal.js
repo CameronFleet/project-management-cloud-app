@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/es/Modal";
 import FormField from "./FormField";
 import BadgeForm from "./BadgeForm";
 import AttributeBadges from "./AttributeBadges";
-import {Button, ButtonToolbar, ControlLabel, ToggleButton, ToggleButtonGroup} from "react-bootstrap";
+import {Button, ButtonToolbar, ControlLabel, ToggleButton, ToggleButtonGroup, Well} from "react-bootstrap";
 import React from "react";
 import {API} from "aws-amplify";
 
@@ -12,7 +12,6 @@ export default class ProjectModal extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.state = props.currentProject;
     }
 
@@ -42,8 +41,13 @@ export default class ProjectModal extends React.Component {
         console.log(this.state);
 
         try {
-            await API.post("projects", "/createProject", {body: this.state});
-            this.props.hideModal();
+            var response = await API.post("projects", "/createProject", {body: this.state});
+
+            if(response.error) {
+                alert(response.error);
+            } else {
+                this.props.hideModal();
+            }
         } catch (e) {
             alert(e.message);
         }
@@ -63,8 +67,6 @@ export default class ProjectModal extends React.Component {
 
     render() {
 
-        const userBadges = new UserBadges([{displayName: "sasa"}, {displayName: "cc"}, {displayName: "peter"}]);
-
         return (
             <>
                 <Modal.Header>
@@ -76,8 +78,13 @@ export default class ProjectModal extends React.Component {
                     <FormField label="Project Title" type="text" id="title" placeholder="Enter title"
                                value={this.state.title} onChange={this.handleChange}/>
 
+                    {this.props.isAdmin ?
                     <FormField label="Project Manager" type="text" id="projectManager" placeholder="Enter title"
                                value={this.state.projectManager} onChange={this.handleChange}/>
+                    :   <>
+                            <ControlLabel>Project Manager</ControlLabel>
+                            <Well>{this.state.projectManager}</Well>
+                        </>}
 
                     <FormField label="Description" type="text" id="description" placeholder="Enter description"
                                value={this.state.description} onChange={this.handleChange}
@@ -94,7 +101,7 @@ export default class ProjectModal extends React.Component {
                                addItem={attribute => this.setState({attributes: this.state.attributes.concat([attribute])})}
                                removeItem={this.removeAttribute}/>
 
-                    <BadgeForm label={"Members"} badgeMap={userBadges.getBadgeMap()}
+                    <BadgeForm label={"Members"} badgeMap={this.props.userBadgeMap}
                                items={this.state.members}
                                addItem={member => this.setState({members: this.state.members.concat([member])})}
                                removeItem={this.removeMember}/>

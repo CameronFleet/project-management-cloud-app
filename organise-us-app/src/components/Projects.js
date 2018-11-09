@@ -15,6 +15,7 @@ import ProjectPanel from "../containers/ProjectPanel";
 
 import ProjectModal from "../containers/ProjectModal";
 import ApproveModal from "../containers/ApproveModal";
+import UserBadges from "../containers/UserBadges";
 
 
 export default class Projects extends React.Component {
@@ -34,6 +35,7 @@ export default class Projects extends React.Component {
             projects: [],
             currentProject: this.blankProject(),
             alert: false,
+            userBadgeMap: undefined,
             alertMessage: {success: false, message: ""}
         };
 
@@ -148,11 +150,36 @@ export default class Projects extends React.Component {
 
     }
 
+    getUserBadgeMap = async () => {
+        try {
+            const userBadges = new UserBadges();
+            var userBadgeMap = await userBadges.getBadgeMap();
+            return userBadgeMap;
+        } catch(e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
     handleSearch = event => {
         this.setState({[event.target.id]: event.target.value});
     }
 
-    handleAdd = () => {
+    handleAdd = async () => {
+        var newProject = this.blankProject();
+
+        if (this.props.isProjectManager && !this.props.isAdmin) {
+            newProject.projectManager = this.props.authorizedUser.displayName;
+        }
+
+        var userBadgeMap = await this.getUserBadgeMap();
+
+
+        this.setState({
+            currentProject: newProject,
+            userBadgeMap: userBadgeMap
+        });
+
         this.showModal(false);
     }
 
@@ -160,11 +187,15 @@ export default class Projects extends React.Component {
 
 
         if (this.state.selectedProjects.length == 1) {
-            this.setState({isDeleting: true});
+            if((this.props.authorizedUser.displayName === this.state.selectedProjects[0].props.projectManager) || this.props.isAdmin) {
+                this.setState({isDeleting: true});
+            } else {
+                this.showAlert(false, "You cannot delete projects you are not manager of.")
+            }
         } else if (this.state.selectedProjects.length == 0) {
             this.showAlert(false,"Please select project(s) to delete.");
         } else if (this.state.selectedProjects.length > 1) {
-            this.showAlert(false, "Only one project may be deleted at a time");
+            this.showAlert(false, "Only one project may be deleted at a time.");
         }
     }
 
@@ -179,25 +210,34 @@ export default class Projects extends React.Component {
         }
     }
 
-    handleEdit = () => {
+    handleEdit = async () => {
+
         if (this.state.selectedProjects.length > 1) {
             this.showAlert(false,"Please select just one project to edit.");
         }
         else if (this.state.selectedProjects.length == 0) {
             this.showAlert(false,"Please select project(s) to edit.")
         } else {
-            this.setState({
-                currentProject: this.state.selectedProjects[0].props
-            })
-            this.showModal(true);
+
+            if((this.props.authorizedUser.displayName === this.state.selectedProjects[0].props.projectManager) || this.props.isAdmin) {
+                var userBadgeMap = await this.getUserBadgeMap();
+
+                this.setState({
+                    currentProject: this.state.selectedProjects[0].props,
+                    userBadgeMap: userBadgeMap
+                });
+
+                this.showModal(true);
+            } else {
+                this.showAlert(false, "You can only edit projects you are manager of");
+            }
         }
     }
 
     handleJoin = async () => {
         if(this.state.selectedProjects.length == 1) {
             try {
-                const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
-                await API.post("projects", "/join", {body: {userId: id, projectId: this.state.selectedProjects[0].props.id}});
+                await API.post("projects", "/join", {body: {userId: this.props.authorizedUser.id, projectId: this.state.selectedProjects[0].props.id}});
                 this.syncWithCloud(true);
                 this.showAlert(true, "Requested to join project, the project manager has been emailed. ");
             } catch(e) {
@@ -324,11 +364,11 @@ export default class Projects extends React.Component {
 
                 <Modal show={this.state.show} onHide={this.hideModal}>
                     <ProjectModal currentProject={this.state.currentProject} editing={this.state.editing}
-                                  hideModal={this.hideModal}/>
+                                  hideModal={this.hideModal} isAdmin={this.props.isAdmin} userBadgeMap={this.state.userBadgeMap}/>
                 </Modal>
 
                 <Modal show={this.state.showApprove}  onHide={() => this.setState({showApprove: false})}>
-                    <ApproveModal currentProject={this.state.currentProject} hideModal={this.hideApproveModal} />
+                    <ApproveModal currentProject={this.state.currentProject} hideModal={this.hideApproveModal} authorizedUser={this.props.authorizedUser}/>
                 </Modal>
 
                 <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} >

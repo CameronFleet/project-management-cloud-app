@@ -14,34 +14,19 @@ export default class Profile extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {  displayName: "",
-                        attributes: [],
-                        pitch: "",
-                        userRole: "",
-                        attributeForm: <> </>,
-                        showSuccess: false,
-                        showFailure: false};
-    }
+        this.state = Object.assign({} , {showSuccess: false,
+            showFailure: false}, this.props.authorizedUser);
 
-    async componentDidMount()  {
-        await this.loadFromCloud();
-        this.setState({attributeForm: this.renderAttributes()});
 
     }
 
     loadFromCloud = async() =>  {
-        const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
+        try {
+            const response = await API.post("users", "/profile", {body: {id: this.props.authorizedUser.id}});
+            this.setState(response.profile.Item);
 
-        this.id = id;
-
-        if(id !== null) {
-            try {
-                const response = await API.post("users", "/profile", {body: {id: id}});
-                this.setState(response.profile.Item);
-
-            } catch (e) {
-                alert(e.message);
-            }
+        } catch (e) {
+            alert(e.message);
         }
     }
 
@@ -59,21 +44,18 @@ export default class Profile extends React.Component {
     handleSubmit = async () => {
         if(this.id !== null) {
             try {
-                await API.post("users", "/update/profile", {body: {id: this.id, displayName: this.state.displayName,
+                await API.post("users", "/update/profile", {body: {id: this.state.id, displayName: this.state.displayName,
                                                             pitch: this.state.pitch, attributes: this.state.attributes}});
+                await this.loadFromCloud();
+                await this.props.authorize();
                 this.setState({showSuccess: true});
             } catch(e) {
                 this.setState({showFailure: true});
+                console.log(e.message);
             }
         }
     }
 
-    renderAttributes = () => {
-        return <BadgeForm label={"Attributes"} badgeMap={AttributeBadges.getBadgeMap()}
-                   items={this.state.attributes}
-                   addItem={attribute => this.setState({attributes: this.state.attributes.concat([attribute])})}
-                   removeItem={this.removeAttribute}/>
-    }
     render() {
         return (
             <div>
@@ -98,8 +80,10 @@ export default class Profile extends React.Component {
                                    value={this.state.displayName} onChange={this.handleChange}/>
                         <FormField label="Pitch" type="text" id="pitch" placeholder="Enter pitch"
                                    value={this.state.pitch} onChange={this.handleChange} componentClass="textarea"/>
-                        {this.state.attributeForm}
-
+                        <BadgeForm label={"Attributes"} badgeMap={AttributeBadges.getBadgeMap()}
+                                   items={this.state.attributes}
+                                   addItem={attribute => this.setState({attributes: this.state.attributes.concat([attribute])})}
+                                   removeItem={this.removeAttribute} />
 
                     </Panel.Body>
 

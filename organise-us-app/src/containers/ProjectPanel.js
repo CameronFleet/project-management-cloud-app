@@ -83,7 +83,7 @@ export default class ProjectPanel extends React.Component {
 
                 const tooltip = (
                     <Tooltip id="tooltip" className="overflowTooltip">
-                        {overflowMembers}
+                        <h5>{overflowMembers}</h5>
                     </Tooltip>
                 );
 

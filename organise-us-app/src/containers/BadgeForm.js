@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormGroup, FormControl, InputGroup, Glyphicon, ControlLabel, Button} from 'react-bootstrap';
+import {FormGroup, FormControl, InputGroup, Glyphicon, ControlLabel, Button, Badge} from 'react-bootstrap';
 
 import "./BadgeForm.css";
 
@@ -8,14 +8,20 @@ export default class BadgeForm extends React.Component {
     constructor(props) {
         super(props);
 
-        if (this.props.items) {
+        if (props.items) {
             var existingBadges = [];
 
-            for (var i = 0; i < this.props.items.length; i++) {
+            for (var i = 0; i < props.items.length; i++) {
 
-                var badgeId = this.props.items[i];
-                var badge = this.props.badgeMap.get(badgeId);
-                existingBadges.push({id: badgeId, badge: this.formatBadge(badgeId, badge)});
+                var badgeId = props.items[i].toLowerCase();
+                var badge = props.badgeMap.get(badgeId);
+
+                if(badge !== undefined) {
+                    existingBadges.push({id: badgeId, badge: this.formatBadge(badgeId, badge)});
+                } else {
+                    existingBadges.push({id: badgeId, badge: this.formatBadge(badgeId, <Badge style={{color: 'white', backgroundColor: 'red',
+                                                                                marginLeft: 3}}>unknown</Badge>)})
+                }
             }
 
         }
@@ -43,16 +49,12 @@ export default class BadgeForm extends React.Component {
         this.props.removeItem(badgeId);
     }
 
-
-
-
-
     validateForm = () => {
         var it = this.props.badgeMap.keys();
         var badgeId = it.next();
 
         while (!badgeId.done) {
-            if (badgeId.value === this.state.identifier.toLowerCase()) {
+            if (badgeId.value.toLowerCase() === this.state.identifier.toLowerCase()) {
                 return true;
             }
             badgeId = it.next();
