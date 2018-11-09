@@ -59,6 +59,23 @@ module.exports.getAllItems = async (resultantStructure, table) => {
     }
 }
 
+module.exports.getAll = async (attributes, table) => {
+    const params = {
+        TableName: table,
+        AttributesToGet: attributes
+    }
+
+    try {
+        const result = await ddb.scan(params).promise();
+        console.log(result);
+        return response.respondSuccess(result.Items);
+
+    } catch(e) {
+        console.log(e);
+        return response.respondFailure({status: false});
+    }
+}
+
 
 module.exports.updateItem = async (params) => {
 

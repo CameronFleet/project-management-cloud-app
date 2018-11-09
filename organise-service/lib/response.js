@@ -1,7 +1,9 @@
-
-
-exports.respondSuccess = (body) =>{
+exports.respondSuccess = (body) => {
     return buildResponse(200, body);
+}
+
+exports.respondError = (body) => {
+    return buildResponse(200, {error: body});
 }
 
 exports.respondFailure = (body) => {

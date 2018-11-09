@@ -31,6 +31,11 @@ module.exports.getAllUsers = async () => {
     return await db.getAllItems("users", TABLE_NAME);
 }
 
+module.exports.getAllDisplayNames = async () => {
+
+    return await db.getAll(["displayName"], TABLE_NAME);
+}
+
 module.exports.updateProfile = async (event, context) => {
 
     const data = JSON.parse(event.body);
