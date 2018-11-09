@@ -67,27 +67,6 @@ module.exports.deleteProject = async (event, context) => {
 }
 
 
-module.exports.joinProject = async (event, context) => {
-
-    const data = JSON.parse(event.body);
-    const user = await getUserInformation(data.userId);
-
-    console.log(data);
-
-    const params = {
-        TableName: TABLE_NAME,
-        Key: {
-          id: data.projectId
-        },
-        UpdateExpression: "SET pendingMembers = list_append(pendingMembers, :member)",
-        ExpressionAttributeValues: {
-            ":member": [user.displayName]
-        }
-    }
-
-    return await db.updateItem(params);
-}
-
 getUserInformation = async (id) => {
     const userData = await db.getItem({id: id}, "User", "profile");
     const user = JSON.parse(userData.body);
@@ -99,6 +78,35 @@ getProjectInformation = async (id) => {
     const project = JSON.parse(projectData.body);
     return project.info.Item;
 }
+
+
+module.exports.joinProject = async (event, context) => {
+
+    const data = JSON.parse(event.body);
+    const user = await getUserInformation(data.userId);
+    const project = await getProjectInformation(data.projectId);
+
+    console.log(project);
+    console.log(user);
+
+    if(!project.pendingMembers.includes(user.displayName) && !project.members.includes(user.displayName) && !(project.projectManager === user.displayName)) {
+        const params = {
+            TableName: TABLE_NAME,
+            Key: {
+                id: data.projectId
+            },
+            UpdateExpression: "SET pendingMembers = list_append(pendingMembers, :member)",
+            ExpressionAttributeValues: {
+                ":member": [user.displayName]
+            }
+        }
+
+        return await db.updateItem(params);
+    } else {
+        return response.respondError(["You are already a current/pending member of this project!"]);
+    }
+}
+
 
 addUserToProject = async (user, projId) => {
 
@@ -117,6 +125,53 @@ addUserToProject = async (user, projId) => {
 
 }
 
+removePendingMembers = async (selectedIndices, projectId) => {
+    var expression = "";
+
+    for (var i = 0; i < selectedIndices.length; i++) {
+
+        if (i == selectedIndices.length - 1) {
+            expression += " pendingMembers[" + selectedIndices[i] + "]";
+        } else {
+            expression += " pendingMembers[" + selectedIndices[i] + "],";
+        }
+    }
+
+    console.log(expression);
+
+
+    const params = {
+        TableName: TABLE_NAME,
+        Key: {
+            id: projectId
+        },
+        UpdateExpression: "REMOVE" + expression
+    }
+
+    return await db.updateItem(params);
+}
+
+module.exports.rejectPendingMembers = async event => {
+
+    const data = JSON.parse(event.body);
+
+    console.log(data.userId);
+    console.log(data.projectId);
+
+    const user = await getUserInformation(data.userId);
+    const project = await getProjectInformation(data.projectId);
+
+    console.log(user);
+    console.log(project);
+
+    if(user.displayName.toLowerCase() === project.projectManager.toLowerCase() || user.userRole === "admin") {
+        return await removePendingMembers(data.selectedIndices, data.projectId);
+
+    } else {
+        return response.respondError(["You must be the owner of the project to approve members"]);
+    }
+}
+
 module.exports.approveMembers = async (event) => {
 
     const data = JSON.parse(event.body);
@@ -127,38 +182,14 @@ module.exports.approveMembers = async (event) => {
     const user = await getUserInformation(data.userId);
     const project = await getProjectInformation(data.projectId);
 
-
     console.log(user);
     console.log(project);
 
-    if(user.displayName === project.projectManager || user.userRole === "admin") {
+    if(user.displayName.toLowerCase() === project.projectManager.toLowerCase() || user.userRole === "admin") {
 
-        var expression = "";
-
-        for(var i = 0; i< data.approvalIndices.length; i++) {
-
-            if(i == data.approvalIndices.length - 1) {
-                expression += " pendingMembers["+data.approvalIndices[i]+"]";
-            } else {
-                expression += " pendingMembers["+data.approvalIndices[i]+"],";
-            }
-        }
-
-        console.log(expression);
-
-
-        const params = {
-            TableName: TABLE_NAME,
-            Key: {
-                id: data.projectId
-            },
-            UpdateExpression: "REMOVE" + expression
-        }
-
-        var dbResponse = await db.updateItem(params);
+        var dbResponse = await removePendingMembers(data.selectedIndices, data.projectId);
 
         if(dbResponse.statusCode === 200) {
-
 
             console.log(data.approvedMembers);
 
@@ -176,9 +207,8 @@ module.exports.approveMembers = async (event) => {
             return dbResponse;
         }
 
-
     } else {
-        return response.respondFailure({status: false, reason: "NO ACCESS"});
+        return response.respondError(["You must be the owner of the project to approve members"]);
     }
 
 }

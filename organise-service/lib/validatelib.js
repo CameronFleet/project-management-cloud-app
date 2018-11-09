@@ -10,7 +10,8 @@ const error = {
     invalidTitle: validationString + "Title is more than " + restrictions.title + " characters",
     invalidDescription: validationString + "Description is more than " + restrictions.description + " characters",
     invalidDate: validationString + "End date is before your start date",
-    userDoesNotExist: validationString + "The following user does not exist: ",
+    userDoesNotExist: (user) => validationString + "The following user does not exist: " + user,
+    userAlreadyExists: (user) => validationString + "The display name: [" + user + "] already exists" ,
     invalidStatus: validationString + "The project status does not exist"
 
 }
@@ -25,8 +26,20 @@ async function getUsers() {
     return existingUsers;
 }
 
-module.exports.validateUser = async ({}) => {
+module.exports.validateUser = async ({  displayName: displayName,
+                                        pitch: pitch,
+                                        attributes: attributes,
+                                        ...props }) => {
 
+    const existingUsers = await getUsers();
+
+    var errors = [];
+
+    if(existingUsers.includes(displayName.toLowerCase())) {
+        errors.push(error.userAlreadyExists(displayName));
+    }
+
+    return errors;
 }
 
 module.exports.validateProject = async ({ title: title,
@@ -56,7 +69,7 @@ module.exports.validateProject = async ({ title: title,
 
     members.forEach(member => {
         if(!existingUsers.includes(member.toLowerCase())) {
-            errors.push(error.userDoesNotExist + member);
+            errors.push(error.userDoesNotExist(member));
         }
     });
 
@@ -69,7 +82,7 @@ module.exports.validateProject = async ({ title: title,
     }
 
     if(!existingUsers.includes(projectManager.toLowerCase())) {
-        errors.push(error.userDoesNotExist + projectManager);
+        errors.push(error.userDoesNotExist(projectManager));
     }
 
     if(!validStates.includes(projectStatus)) {

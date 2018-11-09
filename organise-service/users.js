@@ -1,4 +1,6 @@
 var db = require('./lib/dblib');
+var validate = require('./lib/validatelib');
+var response = require('./lib/response');
 
 const TABLE_NAME = "User";
 
@@ -39,25 +41,29 @@ module.exports.getAllDisplayNames = async () => {
 module.exports.updateProfile = async (event, context) => {
 
     const data = JSON.parse(event.body);
+    var errors = await validate.validateUser(data);
 
-    console.log(data);
+    if(errors.length !== 0){
+        return response.respondError(errors);
+    } else {
 
-    const params = {
-        TableName: "User",
-        Key: {
-            id: data.id
-        },
-        UpdateExpression: "SET displayName = :displayName, pitch = :pitch, attributes = :attributes",
-        ExpressionAttributeValues: {
-            ":displayName": data.displayName || null,
-            ":pitch": data.pitch || null,
-            ":attributes": data.attributes || null
-        },
+        const params = {
+            TableName: "User",
+            Key: {
+                id: data.id
+            },
+            UpdateExpression: "SET displayName = :displayName, pitch = :pitch, attributes = :attributes",
+            ExpressionAttributeValues: {
+                ":displayName": data.displayName || null,
+                ":pitch": data.pitch || null,
+                ":attributes": data.attributes || null
+            },
 
-        ReturnValues: "ALL_NEW"
+            ReturnValues: "ALL_NEW"
+        }
+
+        return await db.updateItem(params);
     }
-
-    return await db.updateItem(params);
 }
 
 module.exports.updateUser = async (event, context) => {
@@ -76,7 +82,7 @@ module.exports.updateUser = async (event, context) => {
             ":displayName": data.displayName || null,
             ":pitch": data.pitch || null,
             ":attributes": data.attributes || null,
-            ":userRole": data.role || null
+            ":userRole": data.userRole || null
         },
 
         ReturnValues: "ALL_NEW"
