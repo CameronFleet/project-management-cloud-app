@@ -230,6 +230,12 @@ export default class Projects extends React.Component {
         this.syncWithCloud(true);
     }
 
+    hideApproveModal = () => {
+        this.setState({showApprove: false, currentProject: this.blankProject()});
+        this.syncWithCloud(true);
+
+    }
+
     blankProject = () => {
         return {
             id: "",
@@ -322,7 +328,7 @@ export default class Projects extends React.Component {
                 </Modal>
 
                 <Modal show={this.state.showApprove}  onHide={() => this.setState({showApprove: false})}>
-                    <ApproveModal currentProject={this.state.currentProject} />
+                    <ApproveModal currentProject={this.state.currentProject} hideModal={this.hideApproveModal} />
                 </Modal>
 
                 <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} >
