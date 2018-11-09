@@ -69,7 +69,7 @@ export default class ProjectModal extends React.Component {
             console.log(this.state.approvalIndices);
             console.log(this.state.membersToApprove);
             console.log(this.props.currentProject);
-            await API.post("projects", "/approveMembers", {
+            var response = await API.post("projects", "/approveMembers", {
                 body: {
                     userId: this.props.authorizedUser.id,
                     projectId: this.props.currentProject.id,
@@ -77,7 +77,12 @@ export default class ProjectModal extends React.Component {
                     approvedMembers: this.state.membersToApprove
                 }
             })
-            this.props.hideModal();
+
+            if(response.error) {
+                alert(response.error);
+            } else {
+                this.props.hideModal();
+            }
 
         } catch (e) {
             alert(e.message);

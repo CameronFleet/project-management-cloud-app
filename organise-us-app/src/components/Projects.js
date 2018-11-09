@@ -8,7 +8,7 @@ import {
     Modal,
     Alert
 } from 'react-bootstrap'
-import { API, Auth } from 'aws-amplify'
+import {API, Auth} from 'aws-amplify'
 
 import "./Projects.css"
 import ProjectPanel from "../containers/ProjectPanel";
@@ -16,7 +16,7 @@ import ProjectPanel from "../containers/ProjectPanel";
 import ProjectModal from "../containers/ProjectModal";
 import ApproveModal from "../containers/ApproveModal";
 import UserBadges from "../containers/UserBadges";
-
+import DynamicAlert from "../containers/DynamicAlert";
 
 export default class Projects extends React.Component {
 
@@ -30,6 +30,7 @@ export default class Projects extends React.Component {
             editing: false,
             isDeleting: false,
             filter: 'NONE',
+            sort: 'ALPHABETICALLY',
             searchedTitle: "",
             selectedProjects: [],
             projects: [],
@@ -82,7 +83,7 @@ export default class Projects extends React.Component {
             }
             this.setState({projects: projectPanels});
 
-            if(!silent)
+            if (!silent)
                 this.showAlert(true, "Synced successfully");
 
         } catch (e) {
@@ -90,11 +91,23 @@ export default class Projects extends React.Component {
         }
     }
 
-    compareTitle = (project1, project2) => {
+    compareTitleAsc = (project1, project2) => {
+        if (project1.props.title > project2.props.title)
+            return 1;
+
+        if (project1.props.title < project2.props.title)
+            return -1;
+
+        return 0;
+    }
+
+    compareTitleDsc = (project1, project2) => {
         if (project1.props.title > project2.props.title)
             return -1;
+
         if (project1.props.title < project2.props.title)
             return 1;
+
         return 0;
     }
 
@@ -110,6 +123,10 @@ export default class Projects extends React.Component {
         this.setState({filter: filter});
     }
 
+    setSort = sort => {
+        this.setState({sort: sort});
+    }
+
     renderDisplay(projects) {
 
         var newProjects = projects;
@@ -118,17 +135,24 @@ export default class Projects extends React.Component {
             newProjects = projects.filter(project => (project.props.title.toLowerCase().includes(this.state.searchedTitle.toLowerCase())));
         }
 
-        switch (this.state.filter) {
-
-            case "NONE":
+        switch (this.state.sort) {
+            case "ALPHABETICALLY":
+                newProjects = newProjects.sort(this.compareTitleAsc);
                 break;
 
-            case "TITLE":
-                newProjects = newProjects.sort(this.compareTitle);
+            case "ALT_ALPHABETICALLY":
+                newProjects = newProjects.sort(this.compareTitleDsc);
                 break;
 
             case "MEMBERS":
                 newProjects = newProjects.sort(this.compareMembers);
+                break;
+
+        }
+
+        switch (this.state.filter) {
+
+            case "NONE":
                 break;
 
             case "FINISHED":
@@ -155,11 +179,12 @@ export default class Projects extends React.Component {
             const userBadges = new UserBadges();
             var userBadgeMap = await userBadges.getBadgeMap();
             return userBadgeMap;
-        } catch(e) {
+        } catch (e) {
             console.log(e.message);
             return null;
         }
     }
+
 
     handleSearch = event => {
         this.setState({[event.target.id]: event.target.value});
@@ -187,13 +212,13 @@ export default class Projects extends React.Component {
 
 
         if (this.state.selectedProjects.length == 1) {
-            if((this.props.authorizedUser.displayName === this.state.selectedProjects[0].props.projectManager) || this.props.isAdmin) {
+            if ((this.props.authorizedUser.displayName === this.state.selectedProjects[0].props.projectManager) || this.props.isAdmin) {
                 this.setState({isDeleting: true});
             } else {
                 this.showAlert(false, "You cannot delete projects you are not manager of.")
             }
         } else if (this.state.selectedProjects.length == 0) {
-            this.showAlert(false,"Please select project(s) to delete.");
+            this.showAlert(false, "Please select project(s) to delete.");
         } else if (this.state.selectedProjects.length > 1) {
             this.showAlert(false, "Only one project may be deleted at a time.");
         }
@@ -213,13 +238,13 @@ export default class Projects extends React.Component {
     handleEdit = async () => {
 
         if (this.state.selectedProjects.length > 1) {
-            this.showAlert(false,"Please select just one project to edit.");
+            this.showAlert(false, "Please select just one project to edit.");
         }
         else if (this.state.selectedProjects.length == 0) {
-            this.showAlert(false,"Please select project(s) to edit.")
+            this.showAlert(false, "Please select project(s) to edit.")
         } else {
 
-            if((this.props.authorizedUser.displayName === this.state.selectedProjects[0].props.projectManager) || this.props.isAdmin) {
+            if ((this.props.authorizedUser.displayName === this.state.selectedProjects[0].props.projectManager) || this.props.isAdmin) {
                 var userBadgeMap = await this.getUserBadgeMap();
 
                 this.setState({
@@ -235,26 +260,36 @@ export default class Projects extends React.Component {
     }
 
     handleJoin = async () => {
-        if(this.state.selectedProjects.length == 1) {
+        if (this.state.selectedProjects.length == 1) {
             try {
-                await API.post("projects", "/join", {body: {userId: this.props.authorizedUser.id, projectId: this.state.selectedProjects[0].props.id}});
-                this.syncWithCloud(true);
-                this.showAlert(true, "Requested to join project, the project manager has been emailed. ");
-            } catch(e) {
+                var response = await API.post("projects", "/join", {
+                    body: {
+                        userId: this.props.authorizedUser.id,
+                        projectId: this.state.selectedProjects[0].props.id
+                    }
+                });
+
+                if (response.error) {
+                    this.showAlert(false, response.error);
+                } else {
+                    this.syncWithCloud(true);
+                    this.showAlert(true, "Requested to join project, the project manager has been emailed. ");
+                }
+            } catch (e) {
                 this.showAlert(false, e.message);
             }
         }
         else {
-            this.showAlert(false,"Please select just one project to join.");
+            this.showAlert(false, "Please select just one project to join.");
         }
     }
 
     handleApprove = async () => {
         if (this.state.selectedProjects.length > 1) {
-            this.showAlert(false,"Please select just one project to approve.");
+            this.showAlert(false, "Please select just one project to approve.");
         }
         else if (this.state.selectedProjects.length == 0) {
-            this.showAlert(false,"Please select project(s) to approve.")
+            this.showAlert(false, "Please select project(s) to approve.")
         } else {
             this.setState({currentProject: this.state.selectedProjects[0].props})
             this.setState({showApprove: true});
@@ -326,18 +361,26 @@ export default class Projects extends React.Component {
                 </>}
 
                 <Button className="joinButton" onClick={this.handleJoin}>
-                    <Glyphicon glyph="log-in" />
+                    <Glyphicon glyph="log-in"/>
                 </Button>
 
-                <DropdownButton title={this.state.filter.toLowerCase()} bsStyle="primary" className="filterButton">
+                <Button className="controlButton" onClick={() => this.setSort("ALPHABETICALLY")} >
+                    <Glyphicon glyph="sort-by-alphabet"/>
+                </Button>
+
+                <Button className="controlButton" onClick={() => this.setSort("ALT_ALPHABETICALLY")} >
+                    <Glyphicon glyph="sort-by-alphabet-alt"/>
+                </Button>
+
+                <Button className="controlButton" onClick={() => this.setSort("MEMBERS")} >
+                    <Glyphicon glyph="sort-by-attributes-alt"/>
+                </Button>
+
+                <DropdownButton title={this.state.filter.toLowerCase()} bsStyle="primary" className="filterButton" className="filterButton">
                     <MenuItem onClick={() => this.setFilter("NONE")}>None</MenuItem>
-                    <MenuItem onClick={() => this.setFilter("TITLE")}>Title</MenuItem>
-                    <MenuItem onClick={() => this.setFilter("MEMBERS")}>Members</MenuItem>
                     <MenuItem onClick={() => this.setFilter("FINISHED")}>Finished</MenuItem>
                     <MenuItem onClick={() => this.setFilter("IN PROGRESS")}>In Progress</MenuItem>
                     <MenuItem onClick={() => this.setFilter("NOT STARTED")}>Not Started</MenuItem>
-
-
                 </DropdownButton>
             </>);
     }
@@ -349,14 +392,17 @@ export default class Projects extends React.Component {
 
         return (
             <div className="Projects">
+
+                {this.state.alert &&
+                <DynamicAlert success={this.state.alertMessage.success}
+                              hideAlert={() => this.setState({alert: false, alertMessage: {success: false, message: ""}})}
+                              timeout={3000} >
+                    {this.state.alertMessage.message}
+                </DynamicAlert>}
+
                 <div className="Controls">
                     {this.renderControls()}
                 </div>
-
-                {this.state.alert &&
-                <Alert bsStyle={this.state.alertMessage.success ? "success" : "danger"} onDismiss={this.hideAlert}>
-                    {this.state.alertMessage.message}
-                </Alert>}
 
                 <div className="Display">
                     {this.renderDisplay(projects)}
@@ -364,14 +410,16 @@ export default class Projects extends React.Component {
 
                 <Modal show={this.state.show} onHide={this.hideModal}>
                     <ProjectModal currentProject={this.state.currentProject} editing={this.state.editing}
-                                  hideModal={this.hideModal} isAdmin={this.props.isAdmin} userBadgeMap={this.state.userBadgeMap}/>
+                                  hideModal={this.hideModal} isAdmin={this.props.isAdmin}
+                                  userBadgeMap={this.state.userBadgeMap}/>
                 </Modal>
 
-                <Modal show={this.state.showApprove}  onHide={() => this.setState({showApprove: false})}>
-                    <ApproveModal currentProject={this.state.currentProject} hideModal={this.hideApproveModal} authorizedUser={this.props.authorizedUser}/>
+                <Modal show={this.state.showApprove} onHide={() => this.setState({showApprove: false})}>
+                    <ApproveModal currentProject={this.state.currentProject} hideModal={this.hideApproveModal}
+                                  authorizedUser={this.props.authorizedUser}/>
                 </Modal>
 
-                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} >
+                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})}>
                     <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})}>
                         <h4>Are you sure you want to delete this project?</h4>
                         <p>

@@ -10,6 +10,20 @@
     float: left;
 }
 
+.Projects .Controls .controlButton {
+    margin-left: 10px;
+}
+
+.Projects .Controls .filterButton {
+    background-color: dodgerblue;
+    color: whitesmoke;
+    border-color: dodgerblue;
+}
+
+.Projects .Controls .filterButton:hover {
+    filter: brightness(80%);
+}
+
 .Projects .Controls .joinButton {
     margin-left: 10px;
 }
@@ -25,7 +39,10 @@
     color: whitesmoke;
     float: left;
     margin-left: 10px;
+}
 
+.Projects .Controls .cloudButton:hover {
+    filter: brightness(80%);
 }
 
 .Projects .Controls .addButton {
@@ -34,7 +51,10 @@
     background-color: forestgreen;
     border: forestgreen;
     color: whitesmoke;
+}
 
+.Projects .Controls .addButton:hover {
+    filter: brightness(80%);
 }
 
 .Projects .Controls .removeButton {
@@ -45,6 +65,10 @@
     color: whitesmoke;
 }
 
+.Projects .Controls .removeButton:hover {
+    filter: brightness(80%);
+}
+
 .Projects .Controls .editButton {
     margin-left:10px;
 
@@ -53,12 +77,22 @@
     color: whitesmoke;
 }
 
+.Projects .Controls .editButton:hover {
+    filter: brightness(80%);
+
+}
+
+
 .Projects .Controls .approveButton {
     margin-left:10px;
 
     background-color: forestgreen;
     border: forestgreen;
     color: whitesmoke;
+}
+
+.Projects .Controls .approveButton:hover {
+    filter: brightness(80%);
 }
 
 .Projects .Controls{

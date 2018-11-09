@@ -44,11 +44,17 @@ export default class Profile extends React.Component {
     handleSubmit = async () => {
         if(this.id !== null) {
             try {
-                await API.post("users", "/update/profile", {body: {id: this.state.id, displayName: this.state.displayName,
+                var response = await API.post("users", "/update/profile", {body: {id: this.state.id, displayName: this.state.displayName,
                                                             pitch: this.state.pitch, attributes: this.state.attributes}});
-                await this.loadFromCloud();
-                await this.props.authorize();
-                this.setState({showSuccess: true});
+                console.log(response);
+                if(response.error) {
+                    alert(response.error);
+                }
+                else {
+                    await this.loadFromCloud();
+                    await this.props.authorize();
+                    this.setState({showSuccess: true});
+                }
             } catch(e) {
                 this.setState({showFailure: true});
                 console.log(e.message);

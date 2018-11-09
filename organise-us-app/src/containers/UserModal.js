@@ -58,7 +58,7 @@ export default class UserModal extends React.Component {
                     <ButtonToolbar>
                         <ToggleButtonGroup type="radio" name="statusOptions"
                                            defaultValue={this.state.userRole}
-                                           onChange={value => this.setState({role: value})}>
+                                           onChange={value => this.setState({userRole: value})}>
                             <ToggleButton value="dev">Developer</ToggleButton>
                             <ToggleButton value="project-manager">Project Manager</ToggleButton>
                             <ToggleButton value="admin">Admin</ToggleButton>
