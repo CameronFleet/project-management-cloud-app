@@ -419,8 +419,8 @@ export default class Projects extends React.Component {
                                   authorizedUser={this.props.authorizedUser}/>
                 </Modal>
 
-                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})}>
-                    <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})}>
+                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} className="deleteModal">
+                    <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})} className="deleteAlert">
                         <h4>Are you sure you want to delete this project?</h4>
                         <p>
                             If you continue with this action there is no way of recovering the project.

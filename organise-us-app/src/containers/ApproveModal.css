@@ -1,5 +1,5 @@
 .unapprovedMember:hover {
-    background-color: forestgreen;
+    background-color: dodgerblue;
     opacity: 0.3;
 }
 
@@ -8,13 +8,18 @@
 }
 
 .approvedMember:hover {
-    background-color: lightgrey;
+    background-color: grey;
     opacity: 0.3;
 
 }
 
 .approvedMember {
-    background-color: forestgreen;
+    background-color: dodgerblue;
+}
+
+
+.button {
+    width: 100px;
 }
 
 
