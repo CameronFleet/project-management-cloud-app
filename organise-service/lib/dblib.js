@@ -5,7 +5,7 @@ var response = require('./response');
 const ddb = new AWS.DynamoDB.DocumentClient();
 
 
-module.exports.getItem = async (key, table) => {
+module.exports.getItem = async (key, table, resultantStructure) => {
 
 
     const params = {
@@ -15,7 +15,7 @@ module.exports.getItem = async (key, table) => {
 
     try {
         const result = await ddb.get(params).promise();
-        return response.respondSuccess({profile: result});
+        return response.respondSuccess({[resultantStructure]: result});
     } catch(e) {
         console.log(e);
         return response.respondFailure({status: false});

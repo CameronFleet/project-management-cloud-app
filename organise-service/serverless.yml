@@ -122,6 +122,14 @@ functions:
         method: post
         cors: true
 
+  approveMembers:
+    handler: projects.approveMembers
+    events:
+    - http:
+        path: projects/approveMembers
+        method: post
+        cors: true
+
   createProject:
     handler: projects.createProject
     events:

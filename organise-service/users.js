@@ -23,7 +23,7 @@ async function createUser(event, context, role) {
 module.exports.getProfile = async (event, context) => {
 
     const data = JSON.parse(event.body);
-    return await db.getItem({id: data.id}, TABLE_NAME);
+    return await db.getItem({id: data.id}, TABLE_NAME, "profile");
 }
 
 module.exports.getAllUsers = async () => {
