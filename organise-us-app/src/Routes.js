@@ -10,10 +10,11 @@ import Profile from "./components/Profile";
 import AuthenticatedRoute from "./containers/AuthenticatedRoute";
 import UnathenticatedRoute from "./containers/UnauthenticatedRoute";
 import AdminRoute from "./containers/AdminRoute";
+import AppliedRoute from "./containers/AppliedRoute";
 
 export default ({childProps}) =>
     <Switch>
-        <Route path="/" exact component={Home}  />
+        <AppliedRoute path="/" exact component={Home} props={childProps}/>
         <AuthenticatedRoute path="/projects" exact component={Projects} props={childProps} />
         <AuthenticatedRoute path="/profile" exact component={Profile} props={childProps} />
         <AdminRoute path="/admin" exact component={Admin} props={childProps} />

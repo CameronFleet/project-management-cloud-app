@@ -1,4 +1,12 @@
 .Home {
-    margin-top: 300px;
+    margin: 50px 15%;
     text-align: center;
+}
+
+.panel {
+    margin: 2em;
+    max-width: 150em;
+}
+
+.MyProjects{
 }

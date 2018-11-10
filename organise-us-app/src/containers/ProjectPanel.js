@@ -26,22 +26,10 @@ export default class ProjectPanel extends React.Component {
         }
     }
 
-    formatMemebers(members) {
-        var formattedOutput = "";
-
-        for (var i = 0; i < members.length; i++) {
-            if (i === members.length - 1) {
-                formattedOutput += members[i];
-            } else {
-                formattedOutput += members[i] + "+"
-            }
-        }
-
-        return formattedOutput;
-    }
-
-
     handleClick = event => {
+        if(this.props.displayOnly)
+            return;
+
         this.setState({isClicked: !this.state.isClicked});
 
         if (!this.state.isClicked) {
@@ -104,7 +92,7 @@ export default class ProjectPanel extends React.Component {
             </Panel.Heading>
             <Panel.Heading className="projectManager">{this.props.projectManager}</Panel.Heading>
             <Panel.Body className="id">{this.props.id}</Panel.Body>
-            <Panel.Body>{this.props.description}</Panel.Body>
+            <Panel.Body className="body">{this.props.description}</Panel.Body>
 
 
             <div className="footer">

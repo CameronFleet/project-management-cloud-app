@@ -1,3 +1,12 @@
+#controlTooltip > .tooltip-inner {
+    background-color: black;
+    color: white;
+}
+
+#controlTooltip > .tooltip-arrow {
+    border-top: 5px solid black;
+}
+
 .Projects {
     margin-top: 20px;
     text-align: center;
@@ -10,7 +19,7 @@
     float: left;
 }
 
-.Projects .Controls .controlButton {
+.Projects .Controls .sortButtonGroup {
     margin-left: 10px;
 }
 
@@ -110,10 +119,15 @@
     margin-right: 200px;
 }
 
-.Projects .panel {
-    margin: 10px;
-    max-width: 330px;
-    float: left;
+.Projects .Display .panel {
+    margin: 1em;
+    max-width: 23em;
+    flex: 1 1 300px;
+}
+
+.Projects .Display {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .Projects .deleteAlert {

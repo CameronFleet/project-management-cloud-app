@@ -14,6 +14,7 @@ export default class SignUp extends React.Component {
             email: "",
             password: "",
             repeatPassword: "",
+            displayName: "",
             isSignedUp: false,
             acceptedTerms: false,
             confirmation: ""
@@ -24,18 +25,25 @@ export default class SignUp extends React.Component {
         return (this.state.email.length > 0 &&
             this.state.password.length > 0 &&
             this.state.password === this.state.repeatPassword) &&
-            this.state.acceptedTerms;
+            this.state.acceptedTerms &&
+            this.state.displayName.length > 0;
     }
 
     handleSubmit = async event => {
         event.preventDefault();
 
         try {
+            var response = await API.post("users", "/validate", {body: {displayName: this.state.displayName}});
+
+            if(response.error) {
+                alert(response.error);
+                return;
+            }
+
             await Auth.signUp({
                 username: this.state.email,
                 password: this.state.password
             });
-
 
             this.setState({isSignedUp: true});
             alert("Signed Up!");
@@ -65,7 +73,7 @@ export default class SignUp extends React.Component {
             const currentUser = await Auth.currentUserInfo();
 
             //Probably a massive security flaw
-            await API.post("users","/create/dev", { body: {id: currentUser.id} });
+            await API.post("users","/create/dev", { body: {id: currentUser.id, displayName: this.state.displayName, email: this.state.email} });
 
             this.props.history.push("/");
         } catch (e) {
@@ -108,6 +116,9 @@ export default class SignUp extends React.Component {
 
                     <FormField label="Confirm Password" type="password" id="repeatPassword" placeholder="Enter password"
                                value={this.state.repeatPassword} onChange={this.handleChange}/>
+
+                    <FormField label="Display name" type="text" id="displayName" placeholder="Enter display name"
+                               value={this.state.displayName} onChange={this.handleChange}/>
 
                     <Checkbox onChange={() => this.setState({acceptedTerms: !this.state.acceptedTerms})}>
                         Do you accept the <a href="https://www.google.com">T&C?</a>

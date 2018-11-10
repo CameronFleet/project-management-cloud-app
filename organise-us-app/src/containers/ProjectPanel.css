@@ -13,6 +13,15 @@
     color: black;
 }
 
+.panel {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.panel .body {
+    flex: 1 1 auto;
+}
 .panel .id {
     text-align: center;
     font-size: 70%;
@@ -35,6 +44,4 @@
 }
 
 .panel .footer {
-    text-align: left;
-}
-
+    text-align: left;}

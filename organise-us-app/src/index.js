@@ -26,6 +26,11 @@ Amplify.configure({
                 name: "projects",
                 endpoint: config.apiGateway.PROJECTS_URL,
                 region: config.apiGateway.REGION
+            },
+            {
+                name: "email",
+                endpoint: config.apiGateway.EMAIL_URL,
+                region: config.apiGateway.REGION
             }
         ]
     }

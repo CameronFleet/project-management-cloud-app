@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {Panel, Button, ControlLabel, Well, Alert} from 'react-bootstrap';
 
@@ -6,7 +5,7 @@ import "./Profile.css";
 import FormField from "../containers/FormField";
 import BadgeForm from "../containers/BadgeForm";
 import AttributeBadges from "../containers/AttributeBadges";
-import { API, Auth} from 'aws-amplify';
+import {API, Auth} from 'aws-amplify';
 
 
 export default class Profile extends React.Component {
@@ -14,13 +13,17 @@ export default class Profile extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = Object.assign({} , {showSuccess: false,
-            showFailure: false}, this.props.authorizedUser);
+        this.state = Object.assign({}, {
+            showSuccess: false,
+            showFailure: false,
+            attributes: [],
+            pitch: ""
+        }, this.props.authorizedUser);
 
 
     }
 
-    loadFromCloud = async() =>  {
+    loadFromCloud = async () => {
         try {
             const response = await API.post("users", "/profile", {body: {id: this.props.authorizedUser.id}});
             this.setState(response.profile.Item);
@@ -42,12 +45,16 @@ export default class Profile extends React.Component {
     }
 
     handleSubmit = async () => {
-        if(this.id !== null) {
+        if (this.id !== null) {
             try {
-                var response = await API.post("users", "/update/profile", {body: {id: this.state.id, displayName: this.state.displayName,
-                                                            pitch: this.state.pitch, attributes: this.state.attributes}});
+                var response = await API.post("users", "/update/profile", {
+                    body: {
+                        id: this.state.id,
+                        pitch: this.state.pitch, attributes: this.state.attributes
+                    }
+                });
                 console.log(response);
-                if(response.error) {
+                if (response.error) {
                     alert(response.error);
                 }
                 else {
@@ -55,7 +62,7 @@ export default class Profile extends React.Component {
                     await this.props.authorize();
                     this.setState({showSuccess: true});
                 }
-            } catch(e) {
+            } catch (e) {
                 this.setState({showFailure: true});
                 console.log(e.message);
             }
@@ -82,19 +89,21 @@ export default class Profile extends React.Component {
                     <Panel.Body>
                         <ControlLabel>Role</ControlLabel>
                         <Well>{this.state.userRole}</Well>
-                        <FormField label="Display Name" type="text" id="displayName" placeholder="Enter display name"
-                                   value={this.state.displayName} onChange={this.handleChange}/>
+                        <ControlLabel>Display Name</ControlLabel>
+                        <Well>{this.state.displayName}</Well>
+                        <ControlLabel>Email</ControlLabel>
+                        <Well>{this.state.email}</Well>
                         <FormField label="Pitch" type="text" id="pitch" placeholder="Enter pitch"
                                    value={this.state.pitch} onChange={this.handleChange} componentClass="textarea"/>
                         <BadgeForm label={"Attributes"} badgeMap={AttributeBadges.getBadgeMap()}
-                                   items={this.state.attributes}
-                                   addItem={attribute => this.setState({attributes: this.state.attributes.concat([attribute])})}
-                                   removeItem={this.removeAttribute} />
-
+                                    items={this.state.attributes}
+                                    addItem={attribute => this.setState({attributes: this.state.attributes.concat([attribute])})}
+                                    removeItem={this.removeAttribute}/>
                     </Panel.Body>
 
                     <Panel.Footer className="footer">
-                        <Button bsStyle="primary" bsSize="large" onClick={this.handleSubmit} className="save">Save</Button>
+                        <Button bsStyle="primary" bsSize="large" onClick={this.handleSubmit}
+                                className="save">Save</Button>
                     </Panel.Footer>
                 </Panel>
             </div>

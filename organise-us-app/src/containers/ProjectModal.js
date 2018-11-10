@@ -58,8 +58,14 @@ export default class ProjectModal extends React.Component {
         console.log(this.state);
 
         try {
-            await API.post("projects", "/updateProject", {body: this.state});
-            this.props.hideModal();
+
+            var response = await API.post("projects", "/updateProject", {body: this.state});
+
+            if(response.error) {
+                alert(response.error);
+            } else {
+                this.props.hideModal();
+            }
         } catch(e) {
             alert(e.message);
         }

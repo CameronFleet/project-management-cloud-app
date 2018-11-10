@@ -17,6 +17,7 @@ class UserRow extends React.Component {
                     <td>{this.props.pitch}</td>
                     <td>{AttributeBadges.getBadges(this.props.attributes)}</td>
                     <td>{this.props.userRole}</td>
+                    <td>{this.props.email}</td>
                 </tr>);
     }
 
@@ -114,6 +115,7 @@ export default class Admin extends React.Component {
                                 <th>Pitch</th>
                                 <th>Attributes</th>
                                 <th>Role</th>
+                                <th>Email</th>
                             </tr>
                             </thead>
                             <tbody>

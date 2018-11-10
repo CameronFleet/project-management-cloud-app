@@ -25,7 +25,6 @@ class App extends Component {
     //TODO: Rewrite authorization!
     authorize = async () => {
         const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
-        console.log(id);
 
         if (id !== null) {
 
@@ -67,14 +66,15 @@ class App extends Component {
     }
 
     unauthorize = () => {
-        this.setState({isProjectManager: false, isAdmin: false});
+        this.setState({isProjectManager: false, isAdmin: false, authorizedUser: null});
     }
 
     async componentDidMount() {
         try {
             await Auth.currentSession();
-            this.setAuthenticated(true);
             await this.authorize();
+            this.setAuthenticated(true);
+
         }
         catch (e) {
             if (e !== 'No current user') {
@@ -95,6 +95,7 @@ class App extends Component {
             await Auth.signOut();
             this.setAuthenticated(false);
             this.unauthorize();
+            this.props.history.push("/login");
         } catch (e) {
             alert(e.message)
         }
@@ -102,15 +103,6 @@ class App extends Component {
     }
 
     render() {
-
-        const cProps = {
-            isAuthenticated: this.state.isAuthenticated,
-            setAuthenticated: this.setAuthenticated,
-            authorize: this.authorize,
-            isProjectManager: this.state.isProjectManager || this.state.isAdmin,
-            isAdmin: this.state.isAdmin,
-            authorizedUser: this.state.authorizedUser
-        };
 
         return (
             <div className="App">
@@ -158,7 +150,14 @@ class App extends Component {
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-                <Routes childProps={cProps}/>
+                <Routes childProps={{
+                    isAuthenticated: this.state.isAuthenticated,
+                    setAuthenticated: this.setAuthenticated,
+                    authorize: this.authorize,
+                    isProjectManager: this.state.isProjectManager || this.state.isAdmin,
+                    isAdmin: this.state.isAdmin,
+                    authorizedUser: this.state.authorizedUser
+                }}/>
             </div>
         );
     }

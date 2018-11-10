@@ -6,9 +6,13 @@ import {
     DropdownButton,
     MenuItem,
     Modal,
-    Alert
+    Alert,
+    Tooltip,
+    ToggleButtonGroup,
+    ToggleButton,
+    OverlayTrigger
 } from 'react-bootstrap'
-import {API, Auth} from 'aws-amplify'
+import {API} from 'aws-amplify'
 
 import "./Projects.css"
 import ProjectPanel from "../containers/ProjectPanel";
@@ -17,6 +21,34 @@ import ProjectModal from "../containers/ProjectModal";
 import ApproveModal from "../containers/ApproveModal";
 import UserBadges from "../containers/UserBadges";
 import DynamicAlert from "../containers/DynamicAlert";
+
+function GlyphButton({glyph: glyph, radio: radio, tooltip: tooltip, ...props}) {
+
+    const button = radio ?
+
+        (<ToggleButton {...props}>
+            <Glyphicon glyph={glyph}/>
+        </ToggleButton>)
+
+        : (<Button {...props}>
+            <Glyphicon glyph={glyph}/>
+        </Button>)
+
+    const tip = tooltip ?   <Tooltip id="controlTooltip">
+                                <strong>{tooltip.heading}</strong>
+                                {tooltip.info &&
+                                <p>{tooltip.info}</p>
+                                }
+                            </Tooltip>
+                        : <></>
+
+
+    return (<OverlayTrigger placement="top" overlay={tip}>
+                {button}
+            </OverlayTrigger>);
+
+}
+
 
 export default class Projects extends React.Component {
 
@@ -111,10 +143,18 @@ export default class Projects extends React.Component {
         return 0;
     }
 
-    compareMembers = (project1, project2) => {
+    compareMembersDsc = (project1, project2) => {
         if (project1.props.members.length > project2.props.members.length)
             return -1;
         if (project1.props.members.length < project2.props.members.length)
+            return 1;
+        return 0;
+    }
+
+    compareMembersAsc = (project1, project2) => {
+        if (project1.props.members.length < project2.props.members.length)
+            return -1;
+        if (project1.props.members.length > project2.props.members.length)
             return 1;
         return 0;
     }
@@ -129,7 +169,7 @@ export default class Projects extends React.Component {
 
     renderDisplay(projects) {
 
-        var newProjects = projects;
+        var newProjects = Object.create(projects);
 
         if (this.state.searchedTitle !== "") {
             newProjects = projects.filter(project => (project.props.title.toLowerCase().includes(this.state.searchedTitle.toLowerCase())));
@@ -144,8 +184,15 @@ export default class Projects extends React.Component {
                 newProjects = newProjects.sort(this.compareTitleDsc);
                 break;
 
+            case "ALT_MEMBERS":
+                newProjects = newProjects.sort(this.compareMembersDsc);
+                break;
+
             case "MEMBERS":
-                newProjects = newProjects.sort(this.compareMembers);
+                newProjects = newProjects.sort(this.compareMembersAsc);
+                break;
+
+            case "NONE":
                 break;
 
         }
@@ -272,9 +319,11 @@ export default class Projects extends React.Component {
                 if (response.error) {
                     this.showAlert(false, response.error);
                 } else {
-                    this.syncWithCloud(true);
                     this.showAlert(true, "Requested to join project, the project manager has been emailed. ");
                 }
+
+                this.syncWithCloud(true);
+
             } catch (e) {
                 this.showAlert(false, e.message);
             }
@@ -330,53 +379,41 @@ export default class Projects extends React.Component {
                 <FormControl id="searchedTitle" className="search" placeHolder="Search title"
                              value={this.state.searchedTitle} onChange={this.handleSearch}/>
 
-                <Button className="searchButton">
-                    <Glyphicon glyph="search"/>
-                </Button>
-
-                <Button className="cloudButton" onClick={() => this.syncWithCloud(false)}>
-                    <Glyphicon glyph="cloud-download"/>
-                </Button>
-
+                <GlyphButton glyph="search" className="searchButton"/>
+                <GlyphButton glyph="cloud-download" className="cloudButton" onClick={() => this.syncWithCloud(false)}
+                             tooltip={{heading: "Sync with database"}}/>
 
                 {this.props.isProjectManager &&
                 <>
-                    <Button className="approveButton" onClick={this.handleApprove}>
-                        <Glyphicon glyph="ok-circle"/>
-                    </Button>
-
-                    <Button className="addButton" onClick={this.handleAdd}>
-                        <Glyphicon glyph="plus"/>
-                    </Button>
-
-                    <Button className="removeButton" onClick={this.handleRemove}>
-                        <Glyphicon glyph="minus"/>
-                    </Button>
-
-                    <Button className="editButton" onClick={this.handleEdit}>
-                        <Glyphicon glyph="pencil"/>
-                    </Button>
-
-
+                    <GlyphButton glyph="ok-circle" className="approveButton" onClick={this.handleApprove}
+                                 tooltip={{heading: "Approve members"}}/>
+                    <GlyphButton glyph="plus" className="addButton" onClick={this.handleAdd}
+                                 tooltip={{heading: "Add project"}}/>
+                    <GlyphButton glyph="minus" className="removeButton" onClick={this.handleRemove}
+                                 tooltip={{heading: "Remove project"}}/>
+                    <GlyphButton glyph="pencil" className="editButton" onClick={this.handleEdit}
+                                 tooltip={{heading: "Edit project"}}/>
                 </>}
 
-                <Button className="joinButton" onClick={this.handleJoin}>
-                    <Glyphicon glyph="log-in"/>
-                </Button>
+                <GlyphButton glyph="log-in" className="joinButton" onClick={this.handleJoin}
+                             tooltip={{heading: "Join project"}}/>
 
-                <Button className="controlButton" onClick={() => this.setSort("ALPHABETICALLY")} >
-                    <Glyphicon glyph="sort-by-alphabet"/>
-                </Button>
+                <ToggleButtonGroup type="radio" name="options" defaultValue={"NONE"} className="sortButtonGroup"
+                                   onChange={value => this.setSort(value)}>
+                    <GlyphButton radio glyph="sort-by-alphabet" value="ALPHABETICALLY"
+                                 tooltip={{heading: "Sort by Title", info: "Lexicographical ordering on title"}}/>
+                    <GlyphButton radio glyph="sort-by-alphabet-alt"  value="ALT_ALPHABETICALLY"
+                                 tooltip={{heading: "Sort by Title", info: "Reverse Lexicographical ordering on title"}}/>
+                    <GlyphButton radio glyph="sort-by-attributes-alt"  value="ALT_MEMBERS"
+                                 tooltip={{heading: "Sort by No. Members", info: "Descending sort on number of members"}}/>
+                    <GlyphButton radio glyph="sort-by-attributes"  value="MEMBERS"
+                                 tooltip={{heading: "Sort by No. Members", info: "Ascending sort on number of members"}}/>
+                    <GlyphButton radio glyph="sort" className="controlButton" value="NONE"
+                                 tooltip={{heading: "No sorting"}}/>
+                </ToggleButtonGroup>
 
-                <Button className="controlButton" onClick={() => this.setSort("ALT_ALPHABETICALLY")} >
-                    <Glyphicon glyph="sort-by-alphabet-alt"/>
-                </Button>
-
-                <Button className="controlButton" onClick={() => this.setSort("MEMBERS")} >
-                    <Glyphicon glyph="sort-by-attributes-alt"/>
-                </Button>
-
-                <DropdownButton title={this.state.filter.toLowerCase()} bsStyle="primary" className="filterButton" className="filterButton">
+                <DropdownButton title={this.state.filter.toLowerCase()} bsStyle="primary" className="filterButton"
+                                className="filterButton">
                     <MenuItem onClick={() => this.setFilter("NONE")}>None</MenuItem>
                     <MenuItem onClick={() => this.setFilter("FINISHED")}>Finished</MenuItem>
                     <MenuItem onClick={() => this.setFilter("IN PROGRESS")}>In Progress</MenuItem>
@@ -395,8 +432,11 @@ export default class Projects extends React.Component {
 
                 {this.state.alert &&
                 <DynamicAlert success={this.state.alertMessage.success}
-                              hideAlert={() => this.setState({alert: false, alertMessage: {success: false, message: ""}})}
-                              timeout={3000} >
+                              hideAlert={() => this.setState({
+                                  alert: false,
+                                  alertMessage: {success: false, message: ""}
+                              })}
+                              timeout={3000}>
                     {this.state.alertMessage.message}
                 </DynamicAlert>}
 
@@ -419,8 +459,10 @@ export default class Projects extends React.Component {
                                   authorizedUser={this.props.authorizedUser}/>
                 </Modal>
 
-                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})} className="deleteModal">
-                    <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})} className="deleteAlert">
+                <Modal show={this.state.isDeleting} onHide={() => this.setState({isDeleting: false})}
+                       className="deleteModal">
+                    <Alert bsStyle="danger" onDismiss={() => this.setState({isDeleting: false})}
+                           className="deleteAlert">
                         <h4>Are you sure you want to delete this project?</h4>
                         <p>
                             If you continue with this action there is no way of recovering the project.
