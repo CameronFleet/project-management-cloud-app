@@ -3,6 +3,7 @@ const uuidv4 = require('uuid/v4');
 var db = require('./lib/dblib');
 var response = require('./lib/response');
 var validate = require('./lib/validatelib');
+var email = require('./email');
 
 const TABLE_NAME = "Projects";
 
@@ -79,6 +80,24 @@ getProjectInformation = async (id) => {
     return project.info.Item;
 }
 
+getUserEmail = async (displayName) => {
+
+    var usersLib = require("./users");
+
+    const result = await usersLib.getAllUsers();
+    const users  = JSON.parse(result.body).users;
+
+    for(var i = 0; i < users.length; i++) {
+        if(users[i].displayName === displayName) {
+            console.log("EMAIL");
+            console.log(users[i].email);
+            return users[i].email;
+        }
+    }
+
+    return null;
+}
+
 
 module.exports.joinProject = async (event, context) => {
 
@@ -101,7 +120,24 @@ module.exports.joinProject = async (event, context) => {
             }
         }
 
-        return await db.updateItem(params);
+        var errors = []
+
+        try {
+            await email.sendJoinEmail(await getUserEmail(project.projectManager));
+        } catch (e) {
+            console.log(e);
+            errors.push("Project manager may not have confirmed email. You will be added to list of pending users!");
+        }
+
+        try {
+            await db.updateItem(params);
+            return errors.length !== 0 ? response.respondError(errors) : response.respondSuccess({success: true});
+
+        } catch(e) {
+            console.log(e);
+            response.respondFailure(e);
+        }
+
     } else {
         return response.respondError(["You are already a current/pending member of this project!"]);
     }

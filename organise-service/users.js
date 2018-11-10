@@ -16,10 +16,36 @@ module.exports.createAdmin = async (event, context) => {
     return createUser(event, context, "admin");
 }
 
+module.exports.validateUser = async event => {
+
+    const data = JSON.parse(event.body);
+
+    var errors = await validate.validateUser(data);
+
+    if(errors.length !== 0) {
+        return response.respondError(["That Display Name already exists!"]);
+    } else {
+        return response.respondSuccess({success: true});
+    }
+}
+
 async function createUser(event, context, role) {
 
     const data = JSON.parse(event.body);
-    return await db.putItem({id: data.id, userRole: role}, TABLE_NAME);
+
+    //validate data
+    var errors = await validate.validateUser(data);
+
+    if(errors.length !== 0) {
+        return response.respondError(["That Display Name already exists!"]);
+    } else {
+        return await db.putItem({
+            id: data.id,
+            userRole: role,
+            displayName: data.displayName,
+            email: data.email
+        }, TABLE_NAME);
+    }
 }
 
 module.exports.getProfile = async (event, context) => {
@@ -52,9 +78,8 @@ module.exports.updateProfile = async (event, context) => {
             Key: {
                 id: data.id
             },
-            UpdateExpression: "SET displayName = :displayName, pitch = :pitch, attributes = :attributes",
+            UpdateExpression: "SET pitch = :pitch, attributes = :attributes",
             ExpressionAttributeValues: {
-                ":displayName": data.displayName || null,
                 ":pitch": data.pitch || null,
                 ":attributes": data.attributes || null
             },

@@ -27,19 +27,21 @@ async function getUsers() {
 }
 
 module.exports.validateUser = async ({  displayName: displayName,
-                                        pitch: pitch,
-                                        attributes: attributes,
                                         ...props }) => {
-
-    const existingUsers = await getUsers();
 
     var errors = [];
 
-    if(existingUsers.includes(displayName.toLowerCase())) {
-        errors.push(error.userAlreadyExists(displayName));
+    if(displayName) {
+        const existingUsers = await getUsers();
+
+        if (existingUsers.includes(displayName.toLowerCase())) {
+            errors.push(error.userAlreadyExists(displayName));
+        }
+
     }
 
     return errors;
+
 }
 
 module.exports.validateProject = async ({ title: title,

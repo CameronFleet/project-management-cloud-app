@@ -3,14 +3,28 @@
   <component name="ChangeListManager">
     <list default="true" id="6109b67e-8256-42d3-bc98-a803ece3c52c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/dblib.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/dblib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/validatelib.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/validatelib.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/projects.js" beforeDir="false" afterPath="$PROJECT_DIR$/projects.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/serverless.yml" beforeDir="false" afterPath="$PROJECT_DIR$/serverless.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../organise-us-app/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/Routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/Routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/Admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/Home.css" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/Home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/Profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/Profile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/Projects.css" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/Projects.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/Projects.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/Projects.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/ApproveModal.css" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/containers/ApproveModal.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/ApproveModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/containers/ApproveModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/components/SignUp.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/components/SignUp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/AttributeBadges.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/AttributeBadges.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/containers/AttributeBadges.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/ProjectModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/containers/ProjectModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/ProjectPanel.css" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/containers/ProjectPanel.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/containers/ProjectPanel.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/containers/ProjectPanel.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../organise-us-app/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../organise-us-app/src/index.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -34,7 +48,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="js" value="17" />
+          <entry key="js" value="19" />
           <entry key="json" value="2" />
           <entry key="yml" value="3" />
         </counts>
@@ -42,22 +56,22 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="JSON" value="2" />
-          <entry key="JavaScript" value="17" />
+          <entry key="JavaScript" value="19" />
           <entry key="YAML" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="js" value="13288" />
+          <entry key="js" value="15749" />
           <entry key="json" value="43" />
-          <entry key="yml" value="1037" />
+          <entry key="yml" value="1135" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="JSON" value="43" />
-          <entry key="JavaScript" value="13288" />
-          <entry key="YAML" value="1037" />
+          <entry key="JavaScript" value="15749" />
+          <entry key="YAML" value="1135" />
         </counts>
       </usages-collector>
     </session>
@@ -67,8 +81,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/users.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="82" column="37" selection-start-line="82" selection-start-column="37" selection-end-line="82" selection-end-column="37" />
+            <state relative-caret-position="481">
+              <caret line="77" column="18" selection-start-line="77" selection-start-column="18" selection-end-line="77" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/email.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -76,8 +99,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/projects.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="92" column="24" lean-forward="true" selection-start-line="92" selection-start-column="24" selection-end-line="92" selection-end-column="24" />
+            <state relative-caret-position="187">
+              <caret line="92" column="40" lean-forward="true" selection-start-line="92" selection-start-column="40" selection-end-line="92" selection-end-column="40" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/dblib.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="256">
+              <caret line="90" lean-forward="true" selection-start-line="90" selection-end-line="90" />
             </state>
           </provider>
         </entry>
@@ -85,8 +117,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/validatelib.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="615">
-              <caret line="41" column="14" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="14" />
+            <state relative-caret-position="224">
+              <caret line="30" selection-start-line="30" selection-end-line="30" />
             </state>
           </provider>
         </entry>
@@ -103,8 +135,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/serverless.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="147" selection-start-line="147" selection-end-line="147" />
+            <state relative-caret-position="262">
+              <caret line="36" column="13" lean-forward="true" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -138,12 +170,14 @@
         <option value="$PROJECT_DIR$/mocks/authorize-user.json" />
         <option value="$PROJECT_DIR$/handler.js" />
         <option value="$PROJECT_DIR$/authorizer.js" />
-        <option value="$PROJECT_DIR$/lib/dblib.js" />
         <option value="$PROJECT_DIR$/lib/response.js" />
         <option value="$PROJECT_DIR$/lib/validatelib.js" />
         <option value="$PROJECT_DIR$/users.js" />
-        <option value="$PROJECT_DIR$/projects.js" />
+        <option value="$PROJECT_DIR$/mocks/email.js" />
+        <option value="$PROJECT_DIR$/email.js" />
         <option value="$PROJECT_DIR$/serverless.yml" />
+        <option value="$PROJECT_DIR$/lib/dblib.js" />
+        <option value="$PROJECT_DIR$/projects.js" />
       </list>
     </option>
   </component>
@@ -191,6 +225,9 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/mocks" />
     </key>
@@ -220,12 +257,12 @@
       <workItem from="1541189094595" duration="954000" />
       <workItem from="1541323571556" duration="13816000" />
       <workItem from="1541354838652" duration="2023000" />
-      <workItem from="1541357423253" duration="55955000" />
+      <workItem from="1541357423253" duration="64270000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72748000" />
+    <option name="totallyTimeSpent" value="81063000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -300,10 +337,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/dblib.js">
+    <entry file="file://$PROJECT_DIR$/lib/validatelib.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="61" column="20" selection-start-line="61" selection-start-column="20" selection-end-line="61" selection-end-column="20" />
+        <state relative-caret-position="224">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
         </state>
       </provider>
     </entry>
@@ -314,31 +351,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/validatelib.js">
+    <entry file="file://$PROJECT_DIR$/serverless.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="41" column="14" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="14" />
+        <state relative-caret-position="262">
+          <caret line="36" column="13" lean-forward="true" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/dblib.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="90" lean-forward="true" selection-start-line="90" selection-end-line="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/email.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/users.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="82" column="37" selection-start-line="82" selection-start-column="37" selection-end-line="82" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/serverless.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="147" selection-start-line="147" selection-end-line="147" />
+        <state relative-caret-position="481">
+          <caret line="77" column="18" selection-start-line="77" selection-start-column="18" selection-end-line="77" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/projects.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="92" column="24" lean-forward="true" selection-start-line="92" selection-start-column="24" selection-end-line="92" selection-end-column="24" />
+        <state relative-caret-position="187">
+          <caret line="92" column="40" lean-forward="true" selection-start-line="92" selection-start-column="40" selection-end-line="92" selection-end-column="40" />
         </state>
       </provider>
     </entry>
