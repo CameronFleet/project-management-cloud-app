@@ -127,14 +127,6 @@ functions:
         method: get
         cors: true
 
-  authorize:
-    handler: authorizer.authorize
-    events:
-    - http:
-        path: users/authorize
-        method: post
-        cors: true
-
   joinProject:
     handler: projects.joinProject
     events:
@@ -190,6 +182,15 @@ functions:
         path: projects/delete
         method: post
         cors: true
+
+  authorize:
+    handler: authorizer.authorize
+    events:
+    - http:
+        path: users/authorize
+        method: post
+        cors: true
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
