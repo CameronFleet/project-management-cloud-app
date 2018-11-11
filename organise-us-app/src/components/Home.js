@@ -15,17 +15,17 @@ export default class Home extends React.Component {
     }
 
     async componentDidMount() {
-        await this.syncWithCloud();
+        await this.syncWithCloud(this.props);
     }
 
-    async componentWillReceiveProps() {
-        await this.syncWithCloud();
+    async componentWillReceiveProps(props) {
+        await this.syncWithCloud(props);
     }
 
-    syncWithCloud = async () => {
-        console.log(this.props);
+    syncWithCloud = async (props) => {
+        console.log(props);
 
-        if (this.props.authorizedUser) {
+        if (props.authorizedUser) {
             try {
                 const result = await API.get("projects", "/getAll", {});
                 const projects = result.projects;
@@ -34,7 +34,7 @@ export default class Home extends React.Component {
                 var pendingProjects = [];
                 var ownedProjects = [];
 
-                const displayName = this.props.authorizedUser.displayName;
+                const displayName = props.authorizedUser.displayName;
 
                 for (var i = 0; i < projects.length; i++) {
                     var projectPanel = <ProjectPanel {...projects[i]} displayOnly className="projectPanel"/>;

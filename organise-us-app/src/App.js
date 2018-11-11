@@ -19,60 +19,14 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {isAuthenticated: false, isProjectManager: false, isAdmin: false, authorizedUser: null}
-    }
-
-    //TODO: Rewrite authorization!
-    authorize = async () => {
-        const id = await Auth.currentUserInfo().then(currentUser => currentUser.id).catch(e => null);
-
-        if (id !== null) {
-
-            const projectManager = await API.post("users", "/authorize", {
-                body: {
-                    id: id,
-                    accessLevel: "project-manager"
-                }
-            }).then(response => true).catch(e => false);
-
-            console.log(projectManager);
-
-            const admin = await API.post("users", "/authorize", {
-                body: {
-                    id: id,
-                    accessLevel: "admin"
-                }
-            }).then(response => true).catch(e => false);
-
-            console.log(admin);
-
-            const user = await API.post("users", "/profile", {
-                body: {
-                    id: id
-                }
-            }).then(response => response.profile.Item).catch(e => null);
-
-            this.setState({
-                isProjectManager: projectManager,
-                isAdmin: admin,
-                authorizedUser: user
-            });
-
-        } else {
-            this.unauthorize();
-        }
-
-
-    }
-
-    unauthorize = () => {
-        this.setState({isProjectManager: false, isAdmin: false, authorizedUser: null});
+        this.state = {isAuthenticated: false, isAuthenticating: true, isProjectManager: false, isAdmin: false, authorizedUser: null}
     }
 
     async componentDidMount() {
         try {
-            await Auth.currentSession();
-            await this.authorize();
+            var response = await Auth.currentSession();
+
+            await this.authorize(response.accessToken.jwtToken);
             this.setAuthenticated(true);
 
         }
@@ -90,6 +44,40 @@ class App extends Component {
     }
 
 
+    authorize = async (token) => {
+
+        try {
+            var response = await API.post("users", "/authorize", {body: {token: token}});
+            console.log(response);
+
+
+            const user = await API.post("users", "/profile", {
+                body: {
+                    id: response.id
+                }
+            }).then(response => response.profile.Item).catch(e => null);
+
+
+            this.setState({
+                isProjectManager: response.isProjectManager,
+                isAdmin: response.isAdmin,
+                authorizedUser: user
+            });
+
+            return;
+
+        } catch (e) {
+            this.unauthorize();
+            alert(e);
+        }
+    }
+
+    unauthorize = () => {
+        this.setState({isProjectManager: false, isAdmin: false, authorizedUser: null});
+    }
+
+
+
     handleLogout = async event => {
         try {
             await Auth.signOut();
@@ -105,6 +93,7 @@ class App extends Component {
     render() {
 
         return (
+            (!this.state.isAuthenticating &&
             <div className="App">
                 <Navbar fluid collapseOnSelect>
                     <Navbar.Header>
@@ -158,7 +147,7 @@ class App extends Component {
                     isAdmin: this.state.isAdmin,
                     authorizedUser: this.state.authorizedUser
                 }}/>
-            </div>
+            </div>)
         );
     }
 }

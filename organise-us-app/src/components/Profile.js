@@ -59,7 +59,8 @@ export default class Profile extends React.Component {
                 }
                 else {
                     await this.loadFromCloud();
-                    await this.props.authorize();
+                    var session = await Auth.currentSession();
+                    await this.props.authorize(session.accessToken.jwtToken);
                     this.setState({showSuccess: true});
                 }
             } catch (e) {

@@ -14,7 +14,7 @@ import AppliedRoute from "./containers/AppliedRoute";
 
 export default ({childProps}) =>
     <Switch>
-        <AppliedRoute path="/" exact component={Home} props={childProps}/>
+        <AuthenticatedRoute path="/" exact component={Home} props={childProps}/>
         <AuthenticatedRoute path="/projects" exact component={Projects} props={childProps} />
         <AuthenticatedRoute path="/profile" exact component={Profile} props={childProps} />
         <AdminRoute path="/admin" exact component={Admin} props={childProps} />

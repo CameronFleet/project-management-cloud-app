@@ -20,9 +20,9 @@ export default class Login extends React.Component {
         event.preventDefault();
 
         try {
-            await Auth.signIn(this.state.email, this.state.password);
+            const response = await Auth.signIn(this.state.email, this.state.password);
             this.props.setAuthenticated(true);
-            await this.props.authorize();
+            await this.props.authorize(response.signInUserSession.accessToken.jwtToken);
             this.props.history.push("/");
         } catch(e) {
             alert(e.message);

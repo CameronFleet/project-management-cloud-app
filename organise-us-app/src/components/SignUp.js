@@ -66,14 +66,17 @@ export default class SignUp extends React.Component {
 
             alert("Account Confirmed");
 
-            await Auth.signIn(this.state.email, this.state.password);
+            var response = await Auth.signIn(this.state.email, this.state.password);
+
+            console.log(response);
 
             alert("Signed in");
 
-            const currentUser = await Auth.currentUserInfo();
-
             //Probably a massive security flaw
-            await API.post("users","/create/dev", { body: {id: currentUser.id, displayName: this.state.displayName, email: this.state.email} });
+            await API.post("users","/create/dev", { body: {id: response.username, displayName: this.state.displayName, email: this.state.email} });
+
+            this.props.setAuthenticated(true);
+            await this.props.authorize(response.signInUserSession.accessToken.jwtToken);
 
             this.props.history.push("/");
         } catch (e) {
