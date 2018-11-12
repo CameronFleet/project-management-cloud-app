@@ -16,6 +16,7 @@ Amplify.configure({
 
     },
     API: {
+        iam_region: 'eu-west-2',
         endpoints: [
             {
                 name: "users",

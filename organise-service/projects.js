@@ -123,7 +123,7 @@ module.exports.joinProject = async (event, context) => {
         var errors = []
 
         try {
-            await email.sendJoinEmail(await getUserEmail(project.projectManager));
+            await email.sendJoinEmail(await getUserEmail(project.projectManager), user.displayName, project.title);
         } catch (e) {
             console.log(e);
             errors.push("Project manager may not have confirmed email. You will be added to list of pending users!");
