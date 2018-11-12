@@ -29,7 +29,7 @@ module.exports.sendJoinEmail = async (email, memberWhoRequested, projectTitle) =
                 Data: memberWhoRequested + ' Has requested to join your project!'
             }
         },
-        Source: 'cameron-fleet@hotmail.com'
+        Source: 'organise-us@outlook.com'
     };
 
     return new AWS.SES({region: 'eu-west-1'}).sendEmail(params).promise();
